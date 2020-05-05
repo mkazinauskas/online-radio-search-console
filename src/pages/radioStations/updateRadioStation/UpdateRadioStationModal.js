@@ -36,7 +36,7 @@ class UpdateRadioStationModal extends Component {
                     genres: values.genres ? values.genres.map(id => { return { id } }) : []
                 }
 
-                Axios.patch(`/admin/radio-stations/${this.props.radioStation.id}`, content, config)
+                Axios.patch(`${API_URL}/admin/radio-stations/${this.props.radioStation.id}`, content, config)
                     .then(() => this.setState({ ...this.state, successMessage: 'Radio station was updated' }))
                     .catch(() => this.setState({ ...this.state, errorMessage: 'Failed to update radio station' }))
                     .then(() => this.setState({ ...this.state, loading: false }));

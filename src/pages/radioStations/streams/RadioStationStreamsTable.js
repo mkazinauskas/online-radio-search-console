@@ -7,6 +7,7 @@ import DeleteRadioStationStreamButton from './delete/DeleteRadioStationStreamBut
 import UpdateRadioStationStreamButton from './update/UpdateRadioStationStreamButton';
 import ShowStreamsUrlsButton from './urls/ShowStreamsUrlsButton';
 import CheckStreamIsWorkingButton from './working/CheckStreamIsWorkingButton';
+import { API_URL } from '../../../AppConfig';
 
 const columns = [
     {
@@ -148,7 +149,7 @@ class RadioStationStreamsTable extends Component {
 
         const radioStationId = this.props.match.params.radioStationId;
 
-        Axios.get(`/radio-stations/${radioStationId}/streams?${urlSearchParams.toString()}`)
+        Axios.get(`${API_URL}/radio-stations/${radioStationId}/streams?${urlSearchParams.toString()}`)
             .then((response) => {
                 let data = [];
                 if (response.data._embedded && response.data._embedded.radioStationStreamResponseList) {
