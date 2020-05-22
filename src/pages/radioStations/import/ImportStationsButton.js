@@ -29,7 +29,7 @@ class ImportStationsButton extends Component {
         return (
             <span>
                 <Button type="primary" onClick={this.showModal}>
-                    <Icon type="plus-circle" theme="filled" />
+                    <Icon type="upload"/>
                     Import stations
                 </Button>
                 <AddRadioStationModal
