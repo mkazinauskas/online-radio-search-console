@@ -1,7 +1,8 @@
-import React, { Component } from 'react';
-import RadioStationsTable from './RadioStationsTable';
-import AddRadioStationButton from './addStation/AddRadioStationButton';
 import { PageHeader } from 'antd';
+import React, { Component } from 'react';
+import AddRadioStationButton from './addStation/AddRadioStationButton';
+import ImportStationsButton from './import/ImportStationsButton';
+import RadioStationsTable from './RadioStationsTable';
 
 class RadioStationsView extends Component {
 
@@ -14,11 +15,16 @@ class RadioStationsView extends Component {
                     }}
                     title="Radio stations"
                 />
-                <div style={{ marginTop: 10, marginBottom: 10 }}>
-                    <AddRadioStationButton />
+                <div style={{ marginTop: 10 }}>
+                    <span>
+                        <AddRadioStationButton />
+                    </span>
+                    <span style={{ marginLeft: 10 }}>
+                        <ImportStationsButton />
+                    </span>
                 </div>
                 <RadioStationsTable />
-            </div>
+            </div >
         );
     }
 }
