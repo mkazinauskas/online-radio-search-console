@@ -10,7 +10,7 @@ const DEFAULT_STATE = {
     errorMessage: null
 }
 
-class ImportStationsModal extends Component {
+class ExportStationsModal extends Component {
 
     state = {
         ...DEFAULT_STATE
@@ -21,19 +21,22 @@ class ImportStationsModal extends Component {
         this.setState({ loading: true, successMessage: null, errorMessage: null });
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                const config = {
-                    headers: {
-                        Authorization: `Bearer ${this.props.token}`
-                    }
-                }
-
-                const content = {
-                    ...values
-                }
-
-                Axios.post(API_URL + '/admin/radio-stations', content, config)
-                    .then(() => this.setState({ ...this.state, successMessage: 'Radio stations were imported' }))
-                    .catch(() => this.setState({ ...this.state, errorMessage: 'Failed to import radio stations' }))
+                Axios({
+                    url: `${API_URL}/admin/radio-stations/exporter?size=${values.size}&page=${values.page}`,
+                    method: 'GET',
+                    headers: { Authorization: `Bearer ${this.props.token}` },
+                    responseType: 'blob'
+                })
+                    .then((response) => {
+                        const url = window.URL.createObjectURL(new Blob([response.data]));
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.setAttribute('download', 'export.csv');
+                        document.body.appendChild(link);
+                        link.click();
+                        this.setState({ ...this.state, successMessage: 'Radio Stations were exported' })
+                    })
+                    .catch(() => this.setState({ ...this.state, errorMessage: 'Radio Stations failed to export' }))
                     .then(() => this.setState({ ...this.state, loading: false }));
             }
         });
@@ -49,10 +52,17 @@ class ImportStationsModal extends Component {
 
         const form = (
             <Form labelCol={{ span: 5 }} wrapperCol={{ span: 12 }} onSubmit={this.handleSubmit}>
-                <Form.Item label="Title">
-                    {getFieldDecorator('title', {
-                        rules: [{ required: true, message: 'Please input radio station title!' }],
-                    })(<Input />)}
+                <Form.Item label="Page">
+                    {getFieldDecorator('page', {
+                        initialValue: 0,
+                        rules: [{ required: true, message: 'Please enter page for export!' }],
+                    })(<Input type='page' />)}
+                </Form.Item>
+                <Form.Item label="Size">
+                    {getFieldDecorator('size', {
+                        initialValue: 10,
+                        rules: [{ required: true, message: 'Please enter size of items to export!' }],
+                    })(<Input type='size' />)}
                 </Form.Item>
             </Form>
         );
@@ -67,9 +77,9 @@ class ImportStationsModal extends Component {
         return (
             <span>
                 <Modal
-                    title="Add New Radio Station"
+                    title="Export Radio Stations"
                     visible={this.props.visible}
-                    okText="Add"
+                    okText="Export"
                     okButtonProps={{ disabled: this.state.loading }}
                     onOk={this.handleSubmit}
                     onCancel={this.onCancel}
@@ -85,7 +95,7 @@ class ImportStationsModal extends Component {
     }
 }
 
-const form = Form.create({ name: 'coordinated' })(ImportStationsModal)
+const form = Form.create({ name: 'coordinated' })(ExportStationsModal)
 
 const mapStateToProps = (state) => {
     return {
