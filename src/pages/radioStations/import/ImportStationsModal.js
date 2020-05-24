@@ -32,8 +32,8 @@ class ImportStationsModal extends Component {
                 }
 
                 Axios.post(API_URL + '/admin/radio-stations', content, config)
-                    .then(() => this.setState({ ...this.state, successMessage: 'Radio stations were imported' }))
-                    .catch(() => this.setState({ ...this.state, errorMessage: 'Failed to import radio stations' }))
+                   .then(() => this.setState({ ...this.state, successMessage: 'Radio station was added' }))
+                    .catch(() => this.setState({ ...this.state, errorMessage: 'Failed to add radio station' }))
                     .then(() => this.setState({ ...this.state, loading: false }));
             }
         });
