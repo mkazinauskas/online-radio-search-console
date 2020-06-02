@@ -1,4 +1,10 @@
-import { Icon, Layout, Menu } from 'antd';
+import { Layout, Menu } from 'antd';
+import {
+    HomeFilled,
+    UnorderedListOutlined,
+    PlayCircleFilled,
+    ReadFilled
+} from '@ant-design/icons';
 import { createBrowserHistory } from "history";
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -16,15 +22,15 @@ class LeftSideMenuComponent extends Component {
                 <div className="logo" />
                 <Menu theme="dark" mode="inline" defaultSelectedKeys={[history.location.pathname]}>
                     <Menu.Item key={HOME}>
-                        <Icon type="home" /><span>Main</span>
+                        <HomeFilled /><span>Main</span>
                         <Link to={HOME} />
                     </Menu.Item>
                     <Menu.Item key={RADIO_STATIONS}>
-                        <Icon type="unordered-list" /><span>Radio Stations</span>
+                        <UnorderedListOutlined /><span>Radio Stations</span>
                         <Link to={RADIO_STATIONS} />
                     </Menu.Item>
                     <Menu.Item key={SONGS}>
-                        <Icon type="play-circle" /><span>Songs</span>
+                        <PlayCircleFilled /><span>Songs</span>
                         <Link to={SONGS} />
                     </Menu.Item>
                     {this.eventsMenu()}
@@ -36,7 +42,7 @@ class LeftSideMenuComponent extends Component {
     eventsMenu = () => {
         return this.props.hasAdminRole
             ? (<Menu.Item key={EVENTS}>
-                <Icon type="read" /><span>Events</span>
+                <ReadFilled /><span>Events</span>
                 <Link to={EVENTS} />
             </Menu.Item>)
             : null;

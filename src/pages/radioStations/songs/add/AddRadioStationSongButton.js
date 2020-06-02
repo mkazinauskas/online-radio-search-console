@@ -1,11 +1,14 @@
+import { Button } from 'antd';
 import React, { Component } from 'react';
-import { Button, Icon } from 'antd';
+import {
+    PlusCircleFilled,
+} from '@ant-design/icons';
 import { connect } from 'react-redux';
-import AddRadioStationStreamModal from './AddRadioStationSongModal';
-import { withRouter } from 'react-router-dom'
+import { withRouter } from 'react-router-dom';
 import { ADMIN } from '../../../../auth/resourceRoleType';
 import { ONLINE_RADIO_SEARCH_API } from '../../../../auth/resourceTypes';
 import { reloadPage } from '../../../../utils/historyUtils';
+import AddRadioStationStreamModal from './AddRadioStationSongModal';
 
 class AddRadioStationSongButton extends Component {
 
@@ -29,7 +32,7 @@ class AddRadioStationSongButton extends Component {
         return (
             <span>
                 <Button type="primary" onClick={this.showModal}>
-                    <Icon type="plus-circle" theme="filled" />
+                <PlusCircleFilled />
                     Add New Radio Station Song
                 </Button>
                 <AddRadioStationStreamModal

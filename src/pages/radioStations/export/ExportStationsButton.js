@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import { Button, Icon } from 'antd';
+import { Button } from 'antd';
+import {
+    DownloadOutlined,
+} from '@ant-design/icons';
 import { connect } from 'react-redux';
 import AddRadioStationModal from './ExportStationsModal';
 import { ADMIN } from '../../../auth/resourceRoleType';
@@ -29,7 +32,7 @@ class ExportStationsButton extends Component {
         return (
             <span>
                 <Button type="primary" onClick={this.showModal}>
-                    <Icon type="download"/>
+                    <DownloadOutlined />
                     Export stations
                 </Button>
                 <AddRadioStationModal

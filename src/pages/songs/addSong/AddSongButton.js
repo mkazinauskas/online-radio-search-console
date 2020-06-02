@@ -1,4 +1,7 @@
-import { Button, Icon } from 'antd';
+import { Button } from 'antd';
+import {
+    PlusCircleFilled,
+} from '@ant-design/icons';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
@@ -29,7 +32,7 @@ class AddSongButton extends Component {
         return (
             <div>
                 <Button type="primary" onClick={this.showModal}>
-                    <Icon type="plus-circle" theme="filled" />
+                    <PlusCircleFilled />
                     Add New Song
                 </Button>
                 <AddSongModal

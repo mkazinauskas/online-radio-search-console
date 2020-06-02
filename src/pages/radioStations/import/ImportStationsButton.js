@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import { Button, Icon } from 'antd';
+import { Button } from 'antd';
+import {
+    UploadOutlined,
+} from '@ant-design/icons';
 import { connect } from 'react-redux';
 import AddRadioStationModal from './ImportStationsModal';
 import { ADMIN } from '../../../auth/resourceRoleType';
@@ -29,7 +32,7 @@ class ImportStationsButton extends Component {
         return (
             <span>
                 <Button type="primary" onClick={this.showModal}>
-                    <Icon type="upload"/>
+                    <UploadOutlined />
                     Import stations
                 </Button>
                 <AddRadioStationModal

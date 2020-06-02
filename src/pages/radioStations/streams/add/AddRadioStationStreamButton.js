@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import { Button, Icon } from 'antd';
+import { Button } from 'antd';
+import {
+    PlusCircleFilled,
+} from '@ant-design/icons';
 import { connect } from 'react-redux';
 import AddRadioStationStreamModal from './AddRadioStationStreamModal';
 import { withRouter } from 'react-router-dom'
@@ -29,7 +32,7 @@ class AddRadioStationStreamButton extends Component {
         return (
             <span>
                 <Button type="primary" onClick={this.showModal}>
-                    <Icon type="plus-circle" theme="filled" />
+                    <PlusCircleFilled />
                     Add New Stream
                 </Button>
                 <AddRadioStationStreamModal

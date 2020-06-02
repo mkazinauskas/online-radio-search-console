@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import { Modal, Form, Alert, Upload, Icon, Button } from 'antd';
+import { Modal, Form, Alert, Upload, Button } from 'antd';
+import {
+    UploadOutlined,
+} from '@ant-design/icons';
 import Axios from 'axios';
 import { connect } from 'react-redux';
 import { API_URL } from '../../../AppConfig';
@@ -69,7 +72,7 @@ class ImportStationsModal extends Component {
         const form = (
             <Upload {...props}>
                 <Button>
-                    <Icon type="upload" /> Click to Upload
+                    <UploadOutlined /> Click to Upload
                 </Button>
             </Upload>
         );

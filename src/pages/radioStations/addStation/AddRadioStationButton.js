@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import { Button, Icon } from 'antd';
+import { Button } from 'antd';
+import {
+    PlusCircleFilled,
+} from '@ant-design/icons';
 import { connect } from 'react-redux';
 import AddRadioStationModal from './AddRadioStationModal';
 import { ADMIN } from '../../../auth/resourceRoleType';
@@ -29,7 +32,7 @@ class AddRadioStationButton extends Component {
         return (
             <span>
                 <Button type="primary" onClick={this.showModal}>
-                    <Icon type="plus-circle" theme="filled" />
+                    <PlusCircleFilled />
                     Add new station
                 </Button>
                 <AddRadioStationModal

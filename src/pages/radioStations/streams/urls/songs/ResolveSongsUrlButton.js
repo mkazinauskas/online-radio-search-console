@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import { Popconfirm, Button, Icon } from 'antd';
+import { Popconfirm, Button } from 'antd';
+import {
+    RetweetOutlined,
+} from '@ant-design/icons';
 import Axios from 'axios';
 import { connect } from 'react-redux';
 import { ADMIN } from '../../../../../auth/resourceRoleType';
@@ -26,7 +29,7 @@ class ResolveSongsUrlButton extends Component {
                 disabled={this.state.loading}
             >
                 <Button type="primary" disabled={this.state.loading}>
-                    <Icon type="retweet" />Resolve songs url
+                    <RetweetOutlined />Resolve songs url
                 </Button>
             </Popconfirm>
         );
