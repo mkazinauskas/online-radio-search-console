@@ -4,9 +4,8 @@ import Axios from 'axios';
 import { connect } from 'react-redux';
 import { API_URL } from './../../../AppConfig';
 
-const DEFAULT_STATE={
+const DEFAULT_STATE = {
     loading: false,
-    successMessage: null,
     errorMessage: null
 }
 
@@ -16,50 +15,35 @@ class AddSongModal extends Component {
         ...DEFAULT_STATE
     }
 
-    handleSubmit = e => {
-        e.preventDefault();
-        this.setState({ loading: true, successMessage: null, errorMessage: null });
-        this.props.form.validateFields((err, values) => {
-            if (!err) {
-                const config = {
-                    headers: {
-                        Authorization: `Bearer ${this.props.token}`
-                    }
-                }
-
-                const content = {
-                    ...values
-                }
-
-                Axios.post(API_URL + '/admin/songs', content, config)
-                    .then(() => this.setState({ ...this.state, successMessage: 'Song was added' }))
-                    .catch(() => this.setState({ ...this.state, errorMessage: 'Failed to add song' }))
-                    .then(() => this.setState({ ...this.state, loading: false }));
+    onFinish = values => {
+        this.setState({ loading: true, errorMessage: null });
+        const config = {
+            headers: {
+                Authorization: `Bearer ${this.props.token}`
             }
-        });
+        }
+
+        const content = {
+            ...values
+        }
+
+        Axios.post(API_URL + '/admin/songs', content, config)
+            .then(this.onCancel)
+            .catch(() => this.setState({ ...this.state, loading: false, errorMessage: 'Failed to add song...' }));
     };
 
     onCancel = () => {
-        this.props.form.resetFields();
         this.props.onModalClose();
     }
 
     render() {
-        const { getFieldDecorator } = this.props.form;
-
         const form = (
-            <Form labelCol={{ span: 5 }} wrapperCol={{ span: 12 }} onSubmit={this.handleSubmit}>
-                <Form.Item label="Title">
-                    {getFieldDecorator('title', {
-                        rules: [{ required: true, message: 'Please input song title!' }],
-                    })(<Input />)}
+            <Form onFinish={this.onFinish} labelCol={{ span: 5 }} wrapperCol={{ span: 12 }} >
+                <Form.Item label='Title' name='title' rules={[{ required: true, message: 'Please input song title!' }]}>
+                    <Input />
                 </Form.Item>
             </Form>
         );
-
-        const successMessage = this.state.successMessage
-            ? (<Alert message={this.state.successMessage} showIcon type="success" />)
-            : '';
 
         const errorMessage = this.state.errorMessage
             ? (<Alert message={this.state.errorMessage} showIcon type="error" />)
@@ -71,11 +55,10 @@ class AddSongModal extends Component {
                     visible={this.props.visible}
                     okText="Add"
                     okButtonProps={{ disabled: this.state.loading }}
-                    onOk={this.handleSubmit}
+                    onOk={form.on}
                     onCancel={this.onCancel}
                 >
                     <div style={{ marginBottom: 10 }}>
-                        {successMessage}
                         {errorMessage}
                     </div>
                     {form}
@@ -85,12 +68,10 @@ class AddSongModal extends Component {
     }
 }
 
-const form = Form.create({ name: 'coordinated' })(AddSongModal)
-
 const mapStateToProps = (state) => {
     return {
         token: state.auth.token
     }
 }
 
-export default connect(mapStateToProps)(form);
+export default connect(mapStateToProps)(AddSongModal);

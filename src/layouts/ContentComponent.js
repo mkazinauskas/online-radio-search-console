@@ -7,7 +7,7 @@ import MainView from '../pages/main/MainView';
 // import RadioStationSongsView from '../pages/radioStations/songs/RadioStationSongsView';
 // import RadioStationStreamsView from '../pages/radioStations/streams/RadioStationStreamsView';
 // import StreamUrlsView from '../pages/radioStations/streams/urls/StreamUrlsView';
-// import SongsView from '../pages/songs/SongsView';
+import SongsView from '../pages/songs/SongsView';
 import { EVENTS, HOME, RADIO_STATIONS, RADIO_STATION_SONGS, RADIO_STATION_STREAMS, RADIO_STATION_STREAM_URLS, SONGS } from './pathTypes';
 
 export default () => (
@@ -35,13 +35,13 @@ export default () => (
             <Route exact path={RADIO_STATION_STREAM_URLS}>
                 <StreamUrlsView />
             </Route>
+            */}
             <Route exact path={SONGS}>
                 <SongsView />
             </Route>
-            */
             <Route exact path={EVENTS}>
                 <EventsView />
-            </Route> }
+            </Route>
         </Switch>
     </Layout.Content >
 );;
