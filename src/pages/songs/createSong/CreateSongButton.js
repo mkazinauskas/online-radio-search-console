@@ -8,9 +8,9 @@ import { withRouter } from 'react-router-dom';
 import { ADMIN } from '../../../auth/resourceRoleType';
 import { ONLINE_RADIO_SEARCH_API } from '../../../auth/resourceTypes';
 import { reloadPage } from '../../../utils/historyUtils';
-import AddSongModal from './AddSongModal';
+import CreateSongModal from './CreateSongModal';
 
-class AddSongButton extends Component {
+class CreateSongButton extends Component {
 
     state = {
         visible: false,
@@ -35,7 +35,7 @@ class AddSongButton extends Component {
                     <PlusCircleFilled />
                     Add New Song
                 </Button>
-                <AddSongModal
+                <CreateSongModal
                     key={new Date().getMilliseconds()}
                     visible={this.state.visible}
                     onModalClose={this.handleModalClose}
@@ -52,4 +52,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(AddSongButton));
+export default connect(mapStateToProps)(withRouter(CreateSongButton));
