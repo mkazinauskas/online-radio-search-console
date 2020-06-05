@@ -33,7 +33,7 @@ class CreateSongButton extends Component {
             <div>
                 <Button type="primary" onClick={this.showModal}>
                     <PlusCircleFilled />
-                    Add New Song
+                    Create Song
                 </Button>
                 <CreateSongModal
                     key={new Date().getMilliseconds()}
