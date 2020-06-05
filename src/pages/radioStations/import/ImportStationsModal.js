@@ -117,23 +117,8 @@ class ImportStationsModal extends Component {
                 onCancel={this.props.onModalClose}
                 errors={this.state.errors}
                 file={this.state.file}
-                onFileRemove={
-                    () => {
-                        this.setState(() => {
-                            return {
-                                file: null,
-                            };
-                        });
-                    }
-                }
-                beforeUpload={
-                    file => {
-                        this.setState(() => ({
-                            file: file,
-                        }));
-                        return false;
-                    }
-                }
+                onFileRemove={() => this.setState({ ...this.state, file: null })}
+                beforeUpload={file => this.setState({ ...this.state, file })}
             />
         );
     }
