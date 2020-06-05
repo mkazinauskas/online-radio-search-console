@@ -1,6 +1,6 @@
 import { PageHeader } from 'antd';
 import React, { Component } from 'react';
-// import AddRadioStationButton from './addStation/AddRadioStationButton';
+import AddRadioStationButton from './createRadioStation/CreateRadioStationButton';
 // import ImportStationsButton from './import/ImportStationsButton';
 // import ExportStationsButton from './export/ExportStationsButton';
 import RadioStationsTable from './RadioStationsTable';
@@ -17,10 +17,10 @@ class RadioStationsView extends Component {
                     title="Radio stations"
                 />
                 <div style={{ marginTop: 10, marginBottom: 10 }}>
-                    {/* <span>
+                    <span>
                         <AddRadioStationButton />
                     </span>
-                    <span style={{ marginLeft: 10 }}>
+                    {/*<span style={{ marginLeft: 10 }}>
                         <ImportStationsButton />
                     </span>
                     <span style={{ marginLeft: 10 }}>

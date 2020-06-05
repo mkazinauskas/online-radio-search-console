@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { API_URL } from '../../../AppConfig';
 import { extractErrors as handleErrors } from '../../../utils/apiErrorUtils';
 
-const ModalForm = ({ visible, onAdd, onCancel, loading, errors }) => {
+const ModalForm = ({ visible, onCreate, onCancel, loading, errors }) => {
 
     const [form] = Form.useForm();
 
@@ -16,7 +16,7 @@ const ModalForm = ({ visible, onAdd, onCancel, loading, errors }) => {
     return (
         <Modal
             visible={visible}
-            title="Create New Song"
+            title="Create New Radio Station"
             okText="Create"
             cancelText="Cancel"
             onCancel={onCancel}
@@ -25,7 +25,7 @@ const ModalForm = ({ visible, onAdd, onCancel, loading, errors }) => {
                 form
                     .validateFields()
                     .then(values => {
-                        onAdd(values);
+                        onCreate(values);
                     });
             }}
         >
@@ -38,11 +38,11 @@ const ModalForm = ({ visible, onAdd, onCancel, loading, errors }) => {
                     [
                         {
                             required: true,
-                            message: 'Please input song title!'
+                            message: 'Please input radio station title!'
                         },
                         {
-                            max: 300,
-                            message: 'Song title too long! (Max 50)'
+                            max: 100,
+                            message: 'Title too long! (Max 100)'
                         }
                     ]
                 }>
@@ -58,14 +58,14 @@ const DEFAULT_STATE = {
     errors: []
 }
 
-class CreateSongModal extends Component {
+class CreateRadioStationModal extends Component {
 
     state = {
         ...DEFAULT_STATE
     }
 
-    onFinish = values => {
-        this.setState({ loading: true, errorMessage: null });
+    onCreate = values => {
+        this.setState({ loading: true, errors: [] });
         const config = {
             headers: {
                 Authorization: `Bearer ${this.props.token}`
@@ -76,12 +76,12 @@ class CreateSongModal extends Component {
             ...values
         }
 
-        Axios.post(API_URL + '/admin/songs', content, config)
+        Axios.post(API_URL + '/admin/radio-stations', content, config)
             .then(() => {
-                message.success({ content: `Song '${values.title}' has been created`, duration: 3 });
+                message.success({ content: `Radio station '${values.title}' was created successfuly` })
                 this.props.onModalClose();
             })
-            .catch(( response ) => {
+            .catch((response) => {
                 const errors = handleErrors(response)
 
                 if(errors.length){
@@ -90,7 +90,7 @@ class CreateSongModal extends Component {
                     message.error({ content: `Failed to create radio station '${values.title}'`, duration: 5 });
                     this.setState({ ...this.state, loading: false });
                 }
-            });
+            })
     };
 
     render() {
@@ -98,7 +98,7 @@ class CreateSongModal extends Component {
             <ModalForm
                 visible={this.props.visible}
                 loading={this.state.loading}
-                onAdd={this.onFinish}
+                onCreate={this.onCreate}
                 onCancel={this.props.onModalClose}
                 errors={this.state.errors}
             />
@@ -112,4 +112,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(CreateSongModal);
+export default connect(mapStateToProps)(CreateRadioStationModal);
