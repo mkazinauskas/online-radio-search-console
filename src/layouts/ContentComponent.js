@@ -3,7 +3,7 @@ import React from 'react';
 import { Route, Switch } from "react-router-dom";
 import EventsView from '../pages/events/EventsView';
 import MainView from '../pages/main/MainView';
-// import RadioStationsView from '../pages/radioStations/RadioStationsView';
+import RadioStationsView from '../pages/radioStations/RadioStationsView';
 // import RadioStationSongsView from '../pages/radioStations/songs/RadioStationSongsView';
 // import RadioStationStreamsView from '../pages/radioStations/streams/RadioStationStreamsView';
 // import StreamUrlsView from '../pages/radioStations/streams/urls/StreamUrlsView';
@@ -23,10 +23,10 @@ export default () => (
             <Route exact path={HOME}>
                 <MainView />
             </Route>
-            {/* <Route exact path={RADIO_STATIONS}>
+            <Route exact path={RADIO_STATIONS}>
                 <RadioStationsView />
             </Route>
-            <Route exact path={RADIO_STATION_STREAMS}>
+            {/* <Route exact path={RADIO_STATION_STREAMS}>
                 <RadioStationStreamsView />
             </Route>
             <Route exact path={RADIO_STATION_SONGS}>
@@ -34,8 +34,7 @@ export default () => (
             </Route>
             <Route exact path={RADIO_STATION_STREAM_URLS}>
                 <StreamUrlsView />
-            </Route>
-            */}
+            </Route> */}
             <Route exact path={SONGS}>
                 <SongsView />
             </Route>
