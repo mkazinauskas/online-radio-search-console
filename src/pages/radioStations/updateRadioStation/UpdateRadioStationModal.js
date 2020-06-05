@@ -124,10 +124,10 @@ class UpdateRadioStationModal extends Component {
                 message.success({ content: `Radio station '${values.title}' was updated`, duration: 5 });
                 this.props.onModalClose();
             })
-            .catch(( response ) => {
+            .catch((response) => {
                 const errors = extractErrors(response)
 
-                if(errors.length){
+                if (errors.length) {
                     this.setState({ ...this.state, loading: false, errors });
                 } else {
                     message.error({ content: `Failed to update radio station '${values.title}'`, duration: 5 });
@@ -155,16 +155,17 @@ class UpdateRadioStationModal extends Component {
     }
 
     render() {
-        return (<ModalForm
-            visible={this.props.visible}
-            loading={this.state.loading}
-            onSubmit={this.onSubmit}
-            onGenreSearch={this.onGenreSearch}
-            genres={this.state.genres}
-            radioStation={this.props.radioStation}
-            onCancel={this.props.onModalClose}
-            errors={this.state.errors}
-        />
+        return (
+            <ModalForm
+                visible={this.props.visible}
+                loading={this.state.loading}
+                onSubmit={this.onSubmit}
+                onGenreSearch={this.onGenreSearch}
+                genres={this.state.genres}
+                radioStation={this.props.radioStation}
+                onCancel={this.props.onModalClose}
+                errors={this.state.errors}
+            />
         )
     }
 }

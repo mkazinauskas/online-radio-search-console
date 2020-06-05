@@ -1,18 +1,65 @@
 import React, { Component } from 'react';
-import { Modal, Form, Alert, Upload, Button } from 'antd';
+import { Modal, Form, message, Upload, Button } from 'antd';
 import {
     UploadOutlined,
 } from '@ant-design/icons';
 import Axios from 'axios';
 import { connect } from 'react-redux';
 import { API_URL } from '../../../AppConfig';
+import { extractErrors } from '../../../utils/apiErrorUtils';
+
+const ModalForm = ({ visible, onSubmit, onCancel, loading, errors, file, onFileRemove, beforeUpload }) => {
+
+    const [form] = Form.useForm();
+
+    if (errors.length > 0) {
+        form.setFields(errors);
+    }
+
+    const uploadProps = {
+        multiple: false,
+        onRemove: onFileRemove,
+        beforeUpload: beforeUpload,
+        fileList: file === null ? [] : [file],
+    };
+
+    return (
+        <Modal
+            visible={visible}
+            title="Import Radio Stations"
+            okText="Upload"
+            cancelText="Cancel"
+            onCancel={onCancel}
+            okButtonProps={{ disabled: loading }}
+            onOk={() => {
+                form
+                    .validateFields()
+                    .then(values => {
+                        onSubmit(values);
+                    });
+            }}
+        >
+            <Form
+                form={form}
+                labelCol={{ span: 5 }}
+                wrapperCol={{ span: 12 }}
+            >
+                <Upload {...uploadProps}>
+                    <Button>
+                        <UploadOutlined /> Click to Upload
+                </Button>
+                </Upload>
+            </Form>
+        </Modal>
+    );
+};
+
 
 const DEFAULT_STATE = {
     loading: false,
-    successMessage: null,
-    errorMessage: null,
     file: null,
-    uploading: false
+    uploading: false,
+    errors: []
 }
 
 class ImportStationsModal extends Component {
@@ -23,7 +70,7 @@ class ImportStationsModal extends Component {
 
     onCancel = () => {
         this.props.form.resetFields();
-        this.props.onModalClose();
+
     }
 
     onUpload = () => {
@@ -42,69 +89,55 @@ class ImportStationsModal extends Component {
         }
 
         Axios.post(API_URL + '/admin/radio-stations/importer', formData, config)
-            .then(() => this.setState({ ...this.state, successMessage: 'Radio stations were imported' }))
-            .catch(() => this.setState({ ...this.state, errorMessage: 'Failed to import radio stations' }))
-            .then(() => this.setState({ ...this.state, loading: false }));
+            .then(() => {
+                message.success({ content: `Radio stations were uploaded`, duration: 5 });
+                this.props.onModalClose();
+            })
+            .catch((response) => {
+                const errors = extractErrors(response)
+
+                if (errors.length) {
+                    this.setState({ ...this.state, loading: false, errors });
+                } else {
+                    message.error({ content: `Failed to upload radio stations`, duration: 5 });
+                    this.setState({ ...this.state, loading: false });
+                }
+            });
     };
 
     render() {
-        const { file } = this.state;
-
-        const props = {
-            multiple: false,
-            onRemove: () => {
-                this.setState(() => {
-                    return {
-                        file: null,
-                    };
-                });
-            },
-            beforeUpload: file => {
-                this.setState(() => ({
-                    file: file,
-                }));
-                return false;
-            },
-            fileList: file === null ? [] : [file],
-        };
-
-
-        const form = (
-            <Upload {...props}>
-                <Button>
-                    <UploadOutlined /> Click to Upload
-                </Button>
-            </Upload>
-        );
-
-        const successMessage = this.state.successMessage
-            ? (<Alert message={this.state.successMessage} showIcon type="success" />)
-            : '';
-
-        const errorMessage = this.state.errorMessage
-            ? (<Alert message={this.state.errorMessage} showIcon type="error" />)
-            : '';
         return (
-            <span>
-                <Modal
-                    title="Import Radio Stations"
-                    visible={this.props.visible}
-                    onCancel={this.onCancel}
-                    okText='Upload'
-                    onOk={this.onUpload}
-                >
-                    <div style={{ marginBottom: 10 }}>
-                        {successMessage}
-                        {errorMessage}
-                    </div>
-                    {form}
-                </Modal>
-            </span >
+            <ModalForm
+                visible={this.props.visible}
+                loading={this.state.loading}
+                onSubmit={this.onUpload}
+                onGenreSearch={this.onGenreSearch}
+                genres={this.state.genres}
+                radioStation={this.props.radioStation}
+                onCancel={this.props.onModalClose}
+                errors={this.state.errors}
+                file={this.state.file}
+                onFileRemove={
+                    () => {
+                        this.setState(() => {
+                            return {
+                                file: null,
+                            };
+                        });
+                    }
+                }
+                beforeUpload={
+                    file => {
+                        this.setState(() => ({
+                            file: file,
+                        }));
+                        return false;
+                    }
+                }
+            />
         );
     }
 }
-
-const form = Form.create({ name: 'coordinated' })(ImportStationsModal)
 
 const mapStateToProps = (state) => {
     return {
@@ -112,4 +145,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(form);
+export default connect(mapStateToProps)(ImportStationsModal);
