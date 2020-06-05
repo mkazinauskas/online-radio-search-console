@@ -3,6 +3,7 @@ import { Modal, Form, Input, Switch, Select, message } from 'antd';
 import Axios from 'axios';
 import { connect } from 'react-redux';
 import { API_URL } from '../../../AppConfig';
+import { extractErrors } from '../../../utils/apiErrorUtils';
 
 const ModalForm = ({ visible, radioStation, genres, onSubmit, onCancel, onGenreSearch, loading, errors }) => {
 
@@ -46,6 +47,10 @@ const ModalForm = ({ visible, radioStation, genres, onSubmit, onCancel, onGenreS
                         {
                             required: true,
                             message: 'Please input radio station title!'
+                        },
+                        {
+                            max: 100,
+                            message: 'Title too long! (Max 100)'
                         }
                     ]
                 }>
@@ -119,20 +124,15 @@ class UpdateRadioStationModal extends Component {
                 message.success({ content: `Radio station '${values.title}' was updated`, duration: 5 });
                 this.props.onModalClose();
             })
-            .catch(({ response }) => {
-                if (!response) {
-                    message.error({ content: `Failed to update radio station.`, duration: 5 });
+            .catch(( response ) => {
+                const errors = extractErrors(response)
+
+                if(errors.length){
+                    this.setState({ ...this.state, loading: false, errors });
+                } else {
+                    message.error({ content: `Failed to update radio station '${values.title}'`, duration: 5 });
                     this.setState({ ...this.state, loading: false });
-                    return;
                 }
-                const { data } = response;
-                const errors = data.fields.map(field => {
-                    return {
-                        name: field,
-                        errors: [data.message],
-                    }
-                });
-                this.setState({ ...this.state, loading: false, errors });
             });
     }
 

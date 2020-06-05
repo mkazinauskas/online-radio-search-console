@@ -3,7 +3,7 @@ import { Modal, Form, Input, message } from 'antd';
 import Axios from 'axios';
 import { connect } from 'react-redux';
 import { API_URL } from '../../../AppConfig';
-import { extractErrors as handleErrors } from '../../../utils/apiErrorUtils';
+import { extractErrors } from '../../../utils/apiErrorUtils';
 
 const ModalForm = ({ visible, onAdd, onCancel, loading, errors }) => {
 
@@ -82,7 +82,7 @@ class CreateSongModal extends Component {
                 this.props.onModalClose();
             })
             .catch(( response ) => {
-                const errors = handleErrors(response)
+                const errors = extractErrors(response)
 
                 if(errors.length){
                     this.setState({ ...this.state, loading: false, errors });
