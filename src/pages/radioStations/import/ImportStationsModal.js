@@ -12,14 +12,20 @@ const ModalForm = ({ visible, onSubmit, onCancel, loading, errors, file, onFileR
 
     const [form] = Form.useForm();
 
-    if (errors.length > 0) {
-        form.setFields(errors);
-    }
+    React.useEffect(() => {
+        if (errors.length > 0) {
+            form.setFields(errors);
+        }
+    }, [errors]);
 
     const uploadProps = {
+        listType: "text",
         multiple: false,
         onRemove: onFileRemove,
-        beforeUpload: beforeUpload,
+        beforeUpload: file => {
+            beforeUpload(file);
+            return false;
+        },
         fileList: file === null ? [] : [file],
     };
 
@@ -36,19 +42,26 @@ const ModalForm = ({ visible, onSubmit, onCancel, loading, errors, file, onFileR
                     .validateFields()
                     .then(values => {
                         onSubmit(values);
-                    });
+                    })
+                    .catch(() => {return false; });
             }}
         >
             <Form
                 form={form}
-                labelCol={{ span: 5 }}
-                wrapperCol={{ span: 12 }}
-            >
-                <Upload {...uploadProps}>
-                    <Button>
-                        <UploadOutlined /> Click to Upload
-                </Button>
-                </Upload>
+                layout="horizontal"
+                s            >
+                <Form.Item label="Radio Stations from '.csv'" name="file" rules={
+                    [
+                        {
+                            required: true,
+                            message: "Please select Radio stations .csv to upload"
+                        }
+                    ]
+                }>
+                    <Upload {...uploadProps}>
+                        <Button><UploadOutlined />Click to Upload</Button>
+                    </Upload>
+                </Form.Item>
             </Form>
         </Modal>
     );
@@ -58,7 +71,6 @@ const ModalForm = ({ visible, onSubmit, onCancel, loading, errors, file, onFileR
 const DEFAULT_STATE = {
     loading: false,
     file: null,
-    uploading: false,
     errors: []
 }
 
@@ -74,11 +86,14 @@ class ImportStationsModal extends Component {
     }
 
     onUpload = () => {
+        if (!this.state.file) {
+            return;
+        }
         const formData = new FormData();
         formData.append('file', this.state.file);
 
         this.setState({
-            uploading: true,
+            loading: true,
         });
 
         const config = {
@@ -105,6 +120,14 @@ class ImportStationsModal extends Component {
             });
     };
 
+    onFileRemove = () => {
+        this.setState({ ...this.state, file: null, errors: [] });
+    }
+
+    beforeUpload = file => {
+        this.setState({ ...this.state, file });
+    }
+
     render() {
         return (
             <ModalForm
@@ -117,8 +140,8 @@ class ImportStationsModal extends Component {
                 onCancel={this.props.onModalClose}
                 errors={this.state.errors}
                 file={this.state.file}
-                onFileRemove={() => this.setState({ ...this.state, file: null })}
-                beforeUpload={file => this.setState({ ...this.state, file })}
+                onFileRemove={this.onFileRemove}
+                beforeUpload={this.beforeUpload}
             />
         );
     }
