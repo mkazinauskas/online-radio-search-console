@@ -8,9 +8,9 @@ import { withRouter } from 'react-router-dom';
 import { ADMIN } from '../../../../auth/resourceRoleType';
 import { ONLINE_RADIO_SEARCH_API } from '../../../../auth/resourceTypes';
 import { reloadPage } from '../../../../utils/historyUtils';
-import AddRadioStationStreamModal from './AddRadioStationSongModal';
+import AddRadioStationStreamModal from './CreateRadioStationSongModal';
 
-class AddRadioStationSongButton extends Component {
+class CreateRadioStationSongButton extends Component {
 
     state = {
         visible: false,
@@ -33,7 +33,7 @@ class AddRadioStationSongButton extends Component {
             <span>
                 <Button type="primary" onClick={this.showModal}>
                 <PlusCircleFilled />
-                    Add New Radio Station Song
+                    Create New Radio Station Song
                 </Button>
                 <AddRadioStationStreamModal
                     key={new Date().getMilliseconds()}
@@ -52,4 +52,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(AddRadioStationSongButton));
+export default connect(mapStateToProps)(withRouter(CreateRadioStationSongButton));

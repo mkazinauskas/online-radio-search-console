@@ -12,11 +12,9 @@ const ModalForm = ({ visible, onSubmit, onCancel, loading, errors, file, onFileR
 
     const [form] = Form.useForm();
 
-    React.useEffect(() => {
-        if (errors.length > 0) {
-            form.setFields(errors);
-        }
-    }, [errors]);
+    if (errors.length > 0) {
+        form.setFields(errors);
+    }
 
     const uploadProps = {
         listType: "text",
