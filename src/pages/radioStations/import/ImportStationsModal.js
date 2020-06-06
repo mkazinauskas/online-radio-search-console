@@ -43,13 +43,13 @@ const ModalForm = ({ visible, onSubmit, onCancel, loading, errors, file, onFileR
                     .then(values => {
                         onSubmit(values);
                     })
-                    .catch(() => {return false; });
+                    .catch(() => { return false; });
             }}
         >
             <Form
                 form={form}
                 layout="horizontal"
-                s            >
+            >
                 <Form.Item label="Radio Stations from '.csv'" name="file" rules={
                     [
                         {

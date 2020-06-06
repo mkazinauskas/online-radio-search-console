@@ -26,7 +26,8 @@ const ModalForm = ({ visible, onCreate, onCancel, loading, errors }) => {
                     .validateFields()
                     .then(values => {
                         onCreate(values);
-                    });
+                    })
+                    .catch(console.debug);
             }}
         >
             <Form
@@ -84,7 +85,7 @@ class CreateRadioStationModal extends Component {
             .catch((response) => {
                 const errors = extractErrors(response)
 
-                if(errors.length){
+                if (errors.length) {
                     this.setState({ ...this.state, loading: false, errors });
                 } else {
                     message.error({ content: `Failed to create radio station '${values.title}'`, duration: 5 });

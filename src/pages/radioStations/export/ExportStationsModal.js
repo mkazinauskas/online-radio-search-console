@@ -26,7 +26,8 @@ const ModalForm = ({ visible, onSubmit, onCancel, loading, errors }) => {
                     .validateFields()
                     .then(values => {
                         onSubmit(values);
-                    });
+                    })
+                    .catch(console.debug);
             }}
         >
             <Form
