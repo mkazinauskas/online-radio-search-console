@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { isWebUri } from 'valid-url';
 import { API_URL } from '../../../../AppConfig';
+import { extractErrors } from '../../../../utils/apiErrorUtils';
 
 const ModalForm = ({ visible, onCreate, onCancel, loading, errors }) => {
 
@@ -31,36 +32,30 @@ const ModalForm = ({ visible, onCreate, onCancel, loading, errors }) => {
                     .catch(console.debug);
             }}
         >
-            <Form
-                form={form}
-                labelCol={{ span: 5 }}
-                wrapperCol={{ span: 12 }}
-            >
-                <Form.Item label="URL" url='url' rules={
+            <Form form={form}>
+                <Form.Item label="URL" name='url' rules={
                     [
                         {
                             required: true,
                             message: 'Please input radio station stream title!'
                         },
                         {
-                            validator: (rule, value, callback) => {
+                            validator: (error, value) => {
                                 if (value === value.trim()) {
-                                    callback();
+                                    return Promise.resolve();
                                 } else {
-                                    callback(false);
+                                    return Promise.reject('Value cannot have empty spaces around');
                                 }
                             },
-                            message: 'Value cannot have empty spaces around',
                         },
                         {
-                            validator: (rule, value, callback) => {
+                            validator: (error, value) => {
                                 if (isWebUri(value)) {
-                                    callback();
+                                    return Promise.resolve();
                                 } else {
-                                    callback(false);
+                                    return Promise.reject('Radio station stream url is invalid');
                                 }
                             },
-                            message: 'Radio station stream url is invalid',
                         }
                     ]
                 }>
@@ -73,50 +68,44 @@ const ModalForm = ({ visible, onCreate, onCancel, loading, errors }) => {
 
 const DEFAULT_STATE = {
     loading: false,
-    successMessage: null,
-    errorMessage: null
+    errors: []
 }
 
-class AddRadioStationStreamModal extends Component {
+class CreateRadioStationStreamModal extends Component {
 
     state = {
         ...DEFAULT_STATE
     }
 
-    handleSubmit = e => {
-        e.preventDefault();
-        this.props.form.validateFields((err, values) => {
-            if (!err) {
-                this.setState({ loading: true, successMessage: null, errorMessage: null });
-                const config = {
-                    headers: {
-                        Authorization: `Bearer ${this.props.token}`
-                    }
-                }
-
-                const content = {
-                    ...values
-                }
-
-                const radioStationId = this.props.match.params.radioStationId;
-
-                Axios.post(`${API_URL}/admin/radio-stations/${radioStationId}/streams`, content, config)
-                    .then(() => {
-                        message.success({ content: `Radio station stream was added` })
-                        this.props.onModalClose();
-                    })
-                    .catch((response) => {
-                        const errors = extractErrors(response)
-
-                        if (errors.length) {
-                            this.setState({ ...this.state, loading: false, errors });
-                        } else {
-                            message.error({ content: 'ailed to add stream', duration: 5 });
-                            this.setState({ ...this.state, loading: false });
-                        }
-                    })
+    handleSubmit = values => {
+        this.setState({ loading: true, errors: [] });
+        const config = {
+            headers: {
+                Authorization: `Bearer ${this.props.token}`
             }
-        });
+        }
+
+        const content = {
+            ...values
+        }
+
+        const radioStationId = this.props.match.params.radioStationId;
+
+        Axios.post(`${API_URL}/admin/radio-stations/${radioStationId}/streams`, content, config)
+            .then(() => {
+                message.success({ content: `Radio station stream was added` })
+                this.props.onModalClose();
+            })
+            .catch((response) => {
+                const errors = extractErrors(response)
+
+                if (errors.length) {
+                    this.setState({ ...this.state, loading: false, errors });
+                } else {
+                    message.error({ content: 'Failed to add stream', duration: 5 });
+                    this.setState({ ...this.state, loading: false });
+                }
+            })
     };
 
     render() {
@@ -138,4 +127,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(AddRadioStationStreamModal));
+export default connect(mapStateToProps)(withRouter(CreateRadioStationStreamModal));
