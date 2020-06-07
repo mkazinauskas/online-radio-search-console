@@ -26,7 +26,8 @@ const ModalForm = ({ visible, onAdd, onCancel, loading, errors }) => {
                     .validateFields()
                     .then(values => {
                         onAdd(values);
-                    });
+                    })
+                    .catch(console.debug);
             }}
         >
             <Form

@@ -33,8 +33,7 @@ const ModalForm = ({ visible, onCreate, onCancel, loading, errors }) => {
         >
             <Form
                 form={form}
-                labelCol={{ span: 5 }}
-                wrapperCol={{ span: 12 }}
+                layout='vertical'
             >
                 <Form.Item label="Song Id" name='songId' rules={[
                     {

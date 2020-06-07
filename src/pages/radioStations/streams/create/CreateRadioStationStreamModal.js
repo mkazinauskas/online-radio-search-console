@@ -32,7 +32,7 @@ const ModalForm = ({ visible, onCreate, onCancel, loading, errors }) => {
                     .catch(console.debug);
             }}
         >
-            <Form form={form}>
+            <Form form={form} layout='vertical'>
                 <Form.Item label="URL" name='url' rules={
                     [
                         {

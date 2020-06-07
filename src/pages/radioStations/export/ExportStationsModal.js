@@ -32,8 +32,7 @@ const ModalForm = ({ visible, onSubmit, onCancel, loading, errors }) => {
         >
             <Form
                 form={form}
-                labelCol={{ span: 5 }}
-                wrapperCol={{ span: 12 }}
+                layout='vertical'
                 initialValues={{
                     'page': 0,
                     'size': 10

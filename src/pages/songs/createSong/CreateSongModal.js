@@ -26,13 +26,13 @@ const ModalForm = ({ visible, onAdd, onCancel, loading, errors }) => {
                     .validateFields()
                     .then(values => {
                         onAdd(values);
-                    });
+                    })
+                    .catch(console.debug);
             }}
         >
             <Form
                 form={form}
-                labelCol={{ span: 5 }}
-                wrapperCol={{ span: 12 }}
+                layout='vertical'
             >
                 <Form.Item label='Title' name='title' rules={
                     [
