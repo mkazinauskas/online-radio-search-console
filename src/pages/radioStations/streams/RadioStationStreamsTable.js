@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { createURLRadioStationStreams } from '../../../layouts/pathTypes';
 import DeleteRadioStationStreamButton from './delete/DeleteRadioStationStreamButton';
-// import UpdateRadioStationStreamButton from './update/UpdateRadioStationStreamButton';
+import UpdateRadioStationStreamButton from './update/UpdateRadioStationStreamButton';
 import ShowStreamsUrlsButton from './urls/ShowStreamsUrlsButton';
 import CheckStreamIsWorkingButton from './working/CheckStreamIsWorkingButton';
 import { API_URL } from '../../../AppConfig';
@@ -66,11 +66,11 @@ const columns = [
                         streamId={record.id}
                         id={record.id}
                     />
-                    {/* <UpdateRadioStationStreamButton
+                    <UpdateRadioStationStreamButton
                         key={`update-${record.id}`}
                         radioStationStream={record}
                         id={record.id}
-                    /> */}
+                    />
                     <CheckStreamIsWorkingButton
                         key={`working-url-${record.id}`}
                         radioStationId={record.radioStationId}

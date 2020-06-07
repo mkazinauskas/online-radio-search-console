@@ -34,6 +34,7 @@ const ModalForm = ({ visible, radioStation, genres, onSubmit, onCancel, onGenreS
             }}
         >
             <Form
+                layout='vertical'
                 form={form}
                 labelCol={{ span: 5 }}
                 initialValues={{
