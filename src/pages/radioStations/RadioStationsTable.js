@@ -40,7 +40,7 @@ const columns = [
         dataIndex: 'genres',
         render: (text, record) => {
             return (
-                record.genres.map(genre => genre.title).join(',')
+                record.genres.map(genre => genre.title).join(', ')
             );
         }
     },

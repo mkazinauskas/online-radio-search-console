@@ -41,6 +41,7 @@ const ModalForm = ({ visible, radioStation, genres, onSubmit, onCancel, onGenreS
                     'title': radioStation.title,
                     'website': radioStation.website,
                     'enabled': radioStation.enabled,
+                    'genres': radioStation.genres.map(genre => genre.id)
                 }}
             >
                 <Form.Item label="Title" name="title" rules={
