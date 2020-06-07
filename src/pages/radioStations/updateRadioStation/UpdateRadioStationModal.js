@@ -139,7 +139,7 @@ class UpdateRadioStationModal extends Component {
 
 
     onGenreSearch = value => {
-        if (value && value.length > 3) {
+        if (value && value.length >= 2) {
             Axios.get(`${API_URL}/search/genre/?title=${value}`)
                 .then((result) => {
                     this.setState({ ...this.state, genres: result.data._embedded.searchGenreResultResponseList });
