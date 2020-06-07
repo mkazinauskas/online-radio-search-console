@@ -25,7 +25,7 @@ const ModalForm = ({ visible, onCreate, onCancel, loading, errors }) => {
     return (
         <Modal
             visible={visible}
-            title="Update Radio Station Stream"
+            title="Create Radio Station Stream Url"
             okText="Update"
             cancelText="Cancel"
             onCancel={onCancel}
@@ -41,7 +41,14 @@ const ModalForm = ({ visible, onCreate, onCancel, loading, errors }) => {
         >
             <Form form={form} layout='vertical'>
 
-                <Form.Item label="Type" name="type">
+                <Form.Item label="Type" name="type" rules={
+                    [
+                        {
+                            required: true,
+                            message: 'Radio station stream title required!'
+                        }
+                    ]
+                }>
                     <Select
                         defaultActiveFirstOption={false}
                         showArrow={false}
@@ -57,22 +64,20 @@ const ModalForm = ({ visible, onCreate, onCancel, loading, errors }) => {
                     {
                         validator: (rule, value, callback) => {
                             if (value === value.trim()) {
-                                callback();
+                                return Promise.resolve();
                             } else {
-                                callback(false);
+                                return Promise.reject('Value cannot have empty spaces around')
                             }
                         },
-                        message: 'Value cannot have empty spaces around',
                     },
                     {
                         validator: (rule, value, callback) => {
                             if (isWebUri(value)) {
-                                callback();
+                                return Promise.resolve();
                             } else {
-                                callback(false);
+                                return Promise.reject('Radio station stream url is invalid')
                             }
-                        },
-                        message: 'Radio station stream url is invalid',
+                        }
                     }
                 ]}>
                     <Input />
@@ -111,7 +116,7 @@ class CreateStreamUrlModal extends Component {
 
         Axios.post(`${API_URL}/admin/radio-stations/${radioStationId}/streams/${streamId}/urls`, content, config)
             .then(() => {
-                message.success({ content: `Radio station stream url '${values.url}' was added` })
+                message.success({ content: `Radio station stream url '${values.url}' was created` })
                 this.props.onModalClose();
             })
             .catch((response) => {
