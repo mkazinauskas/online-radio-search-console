@@ -13,7 +13,7 @@ class RadioStationsView extends Component {
                 <PageHeader
                     title="Radio stations"
                 />
-                <div style={{ marginTop: 10, marginBottom: 10 }}>
+                <div style={{ marginTop: 0, marginBottom: 15 }}>
                     <span>
                         <AddRadioStationButton />
                     </span>
