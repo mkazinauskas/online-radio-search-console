@@ -1,15 +1,75 @@
 import React, { Component } from 'react';
-import { Modal, Form, Alert, Upload, Icon, Button } from 'antd';
+import { Modal, Form, message, Upload, Button } from 'antd';
+import {
+    UploadOutlined,
+} from '@ant-design/icons';
 import Axios from 'axios';
 import { connect } from 'react-redux';
 import { API_URL } from '../../../AppConfig';
+import { extractErrors } from '../../../utils/apiErrorUtils';
+
+const ModalForm = ({ visible, onSubmit, onCancel, loading, errors, file, onFileRemove, beforeUpload }) => {
+
+    const [form] = Form.useForm();
+
+    if (errors.length > 0) {
+        form.setFields(errors);
+    }
+
+    const uploadProps = {
+        listType: "text",
+        multiple: false,
+        onRemove: onFileRemove,
+        beforeUpload: file => {
+            beforeUpload(file);
+            return false;
+        },
+        fileList: file === null ? [] : [file],
+    };
+
+    return (
+        <Modal
+            visible={visible}
+            title="Import Radio Stations"
+            okText="Upload"
+            cancelText="Cancel"
+            onCancel={onCancel}
+            okButtonProps={{ disabled: loading }}
+            onOk={() => {
+                form
+                    .validateFields()
+                    .then(values => {
+                        onSubmit(values);
+                    })
+                    .catch(() => { return false; });
+            }}
+        >
+            <Form
+                form={form}
+                layout="horizontal"
+            >
+                <Form.Item label="Radio Stations from '.csv'" name="file" rules={
+                    [
+                        {
+                            required: true,
+                            message: "Please select Radio stations .csv to upload"
+                        }
+                    ]
+                }>
+                    <Upload {...uploadProps}>
+                        <Button><UploadOutlined />Click to Upload</Button>
+                    </Upload>
+                </Form.Item>
+            </Form>
+        </Modal>
+    );
+};
+
 
 const DEFAULT_STATE = {
     loading: false,
-    successMessage: null,
-    errorMessage: null,
     file: null,
-    uploading: false
+    errors: []
 }
 
 class ImportStationsModal extends Component {
@@ -20,15 +80,18 @@ class ImportStationsModal extends Component {
 
     onCancel = () => {
         this.props.form.resetFields();
-        this.props.onModalClose();
+
     }
 
     onUpload = () => {
+        if (!this.state.file) {
+            return;
+        }
         const formData = new FormData();
         formData.append('file', this.state.file);
 
         this.setState({
-            uploading: true,
+            loading: true,
         });
 
         const config = {
@@ -39,69 +102,48 @@ class ImportStationsModal extends Component {
         }
 
         Axios.post(API_URL + '/admin/radio-stations/importer', formData, config)
-            .then(() => this.setState({ ...this.state, successMessage: 'Radio stations were imported' }))
-            .catch(() => this.setState({ ...this.state, errorMessage: 'Failed to import radio stations' }))
-            .then(() => this.setState({ ...this.state, loading: false }));
+            .then(() => {
+                message.success({ content: `Radio stations were uploaded`, duration: 5 });
+                this.props.onModalClose();
+            })
+            .catch((response) => {
+                const errors = extractErrors(response)
+
+                if (errors.length) {
+                    this.setState({ ...this.state, loading: false, errors });
+                } else {
+                    message.error({ content: `Failed to upload radio stations`, duration: 5 });
+                    this.setState({ ...this.state, loading: false });
+                }
+            });
     };
 
+    onFileRemove = () => {
+        this.setState({ ...this.state, file: null, errors: [] });
+    }
+
+    beforeUpload = file => {
+        this.setState({ ...this.state, file });
+    }
+
     render() {
-        const { file } = this.state;
-
-        const props = {
-            multiple: false,
-            onRemove: () => {
-                this.setState(() => {
-                    return {
-                        file: null,
-                    };
-                });
-            },
-            beforeUpload: file => {
-                this.setState(() => ({
-                    file: file,
-                }));
-                return false;
-            },
-            fileList: file === null ? [] : [file],
-        };
-
-
-        const form = (
-            <Upload {...props}>
-                <Button>
-                    <Icon type="upload" /> Click to Upload
-                </Button>
-            </Upload>
-        );
-
-        const successMessage = this.state.successMessage
-            ? (<Alert message={this.state.successMessage} showIcon type="success" />)
-            : '';
-
-        const errorMessage = this.state.errorMessage
-            ? (<Alert message={this.state.errorMessage} showIcon type="error" />)
-            : '';
         return (
-            <span>
-                <Modal
-                    title="Import Radio Stations"
-                    visible={this.props.visible}
-                    onCancel={this.onCancel}
-                    okText='Upload'
-                    onOk={this.onUpload}
-                >
-                    <div style={{ marginBottom: 10 }}>
-                        {successMessage}
-                        {errorMessage}
-                    </div>
-                    {form}
-                </Modal>
-            </span >
+            <ModalForm
+                visible={this.props.visible}
+                loading={this.state.loading}
+                onSubmit={this.onUpload}
+                onGenreSearch={this.onGenreSearch}
+                genres={this.state.genres}
+                radioStation={this.props.radioStation}
+                onCancel={this.props.onModalClose}
+                errors={this.state.errors}
+                file={this.state.file}
+                onFileRemove={this.onFileRemove}
+                beforeUpload={this.beforeUpload}
+            />
         );
     }
 }
-
-const form = Form.create({ name: 'coordinated' })(ImportStationsModal)
 
 const mapStateToProps = (state) => {
     return {
@@ -109,4 +151,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(form);
+export default connect(mapStateToProps)(ImportStationsModal);

@@ -2,47 +2,20 @@ import { Button, Result, Table } from 'antd';
 import Axios from 'axios';
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import { RADIO_STATIONS } from '../../layouts/pathTypes';
-import DeleteRadioStationButton from './deleteStation/DeleteRadioStationButton';
-import ShowRadioStationSongsButton from './songs/ShowRadioStationSongsButton';
-import ShowRadioStationStreamsButton from './streams/ShowRadioStationStreamsButton';
-import UpdateRadioStationButton from './updateRadioStation/UpdateRadioStationButton';
-import { API_URL } from './../../AppConfig';
+import { SONGS } from '../../layouts/pathTypes';
+import { API_URL } from '../../AppConfig';
+import DeleteGenreButton from './deleteGenre/DeleteGenreButton';
 
 const columns = [
     {
         title: 'Id',
         dataIndex: 'id',
-    },
-    {
-        title: 'Unique Id',
-        dataIndex: 'uniqueId',
+        width: '10%',
     },
     {
         title: 'Title',
         dataIndex: 'title',
-    },
-    {
-        title: 'Website',
-        dataIndex: 'website',
-    },
-    {
-        title: 'Enabled',
-        dataIndex: 'enabled',
-        render: (text, record) => {
-            return (
-                record.enabled ? 'Yes' : 'No'
-            );
-        }
-    },
-    {
-        title: 'Genres',
-        dataIndex: 'genres',
-        render: (text, record) => {
-            return (
-                record.genres.map(genre => genre.title).join(', ')
-            );
-        }
+        width: '40%',
     },
     {
         title: 'Actions',
@@ -50,23 +23,12 @@ const columns = [
         fixed: 'right',
         render: (text, record) => {
             const id = record.id;
-            return (
-                <span>
-                    <span style={{ padding: 15 }}>
-                        <ShowRadioStationSongsButton key={`songs-${id}`} id={id} style={{ padding: 10 }} />
-                    </span>
-                    <span style={{ padding: 15 }}>
-                        <ShowRadioStationStreamsButton key={`streams-${id}`} id={id} />
-                    </span>
-                    <UpdateRadioStationButton key={`update-radio-station-${id}`} radioStation={record} />
-                    <DeleteRadioStationButton key={`delete-${id}`} id={id} />
-                </span>
-            )
+            return (<DeleteGenreButton key={id} id={id} />)
         },
     }
 ];
 
-class RadioStationsTable extends Component {
+class GenresTable extends Component {
 
     state = {
         data: [],
@@ -126,12 +88,12 @@ class RadioStationsTable extends Component {
         urlSearchParams.set('page', this.state.filter.page);
         urlSearchParams.set('size', this.state.filter.size);
 
-        Axios.get(API_URL + '/radio-stations?' + urlSearchParams.toString())
+        Axios.get(API_URL + '/genres?' + urlSearchParams.toString())
             .then((response) => {
                 let data = [];
 
-                if (response.data._embedded && response.data._embedded.radioStationResponseList) {
-                    data = response.data._embedded.radioStationResponseList;
+                if (response.data._embedded && response.data._embedded.genreResponseList) {
+                    data = response.data._embedded.genreResponseList;
                 }
 
                 if (!data.length && response.data.page.totalPages > 1) {
@@ -159,7 +121,7 @@ class RadioStationsTable extends Component {
         urlSearchParams.set('page', page);
         urlSearchParams.set('size', size);
 
-        this.props.history.push(RADIO_STATIONS + '?' + urlSearchParams.toString());
+        this.props.history.push(SONGS + '?' + urlSearchParams.toString());
     }
 
     handleTableChange = (page) => {
@@ -171,7 +133,7 @@ class RadioStationsTable extends Component {
             return (
                 <Result
                     status="error"
-                    title="Failed to load radio stations"
+                    title="Failed to load songs"
                     subTitle="Please wait until service will be working again"
                     extra={[
                         <Button type="primary" key="console" onClick={this.loadData}>Retry</Button>,
@@ -193,4 +155,4 @@ class RadioStationsTable extends Component {
     }
 }
 
-export default withRouter(RadioStationsTable);
+export default withRouter(GenresTable);

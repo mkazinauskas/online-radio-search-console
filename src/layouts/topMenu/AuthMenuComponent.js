@@ -1,8 +1,14 @@
 import React, { Component } from 'react';
+import {
+    UserOutlined,
+    LoginOutlined,
+    InfoCircleOutlined,
+    LogoutOutlined
+} from '@ant-design/icons';
 
 import { signIn, signOut } from '../../auth/actions';
 import { connect } from 'react-redux';
-import { Menu, Icon } from 'antd';
+import { Menu } from 'antd';
 
 class AuthMenuComponent extends Component {
 
@@ -17,7 +23,7 @@ class AuthMenuComponent extends Component {
     renderLoadingUser() {
         return this.wrapWithMenu(
             <Menu.Item key={0}>
-                <Icon type="user" />
+                <UserOutlined />
                 <span>Loading...</span>
             </Menu.Item>
         );
@@ -26,7 +32,7 @@ class AuthMenuComponent extends Component {
     renderUnauthorizedUser() {
         return this.wrapWithMenu(
             <Menu.Item key={0} onClick={this.props.signIn}>
-                <Icon type="login" />
+                <LoginOutlined />
                 <span>Login/Register</span>
             </Menu.Item>
         );
@@ -36,18 +42,18 @@ class AuthMenuComponent extends Component {
         return this.wrapWithMenu(
             <Menu.SubMenu key={0} title={
                 <span className="submenu-title-wrapper">
-                    <Icon type="user" />
+                    <UserOutlined />
                     Hi, {this.props.name}
                 </span>
             }>
                 <Menu.Item key='accountInfo'>
-                    <Icon type="info-circle" />
+                    <InfoCircleOutlined />
                     <span>Account info</span>
                     <a href={this.props.accountUrl} target='_blank' rel="noopener noreferrer" >Account info</a>
                 </Menu.Item>
                 <Menu.Divider />
                 <Menu.Item key='logout' onClick={this.props.signOut}>
-                    <Icon type="logout" />
+                    <LogoutOutlined />
                     <strong>Logout</strong>
                 </Menu.Item>
             </Menu.SubMenu>

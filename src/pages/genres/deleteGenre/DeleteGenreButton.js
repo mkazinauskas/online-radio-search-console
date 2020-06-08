@@ -1,17 +1,15 @@
+
 import React, { Component } from 'react';
-import { Popconfirm, Button } from 'antd';
-import {
-    RetweetOutlined,
-} from '@ant-design/icons';
+import { Popconfirm, Button, message } from 'antd';
 import Axios from 'axios';
 import { connect } from 'react-redux';
-import { ADMIN } from '../../../../../auth/resourceRoleType';
+import { ADMIN } from '../../../auth/resourceRoleType';
 import { withRouter } from 'react-router-dom'
-import { ONLINE_RADIO_SEARCH_API } from '../../../../../auth/resourceTypes';
-import { reloadPage } from '../../../../../utils/historyUtils';
-import { API_URL } from '../../../../../AppConfig';
+import { ONLINE_RADIO_SEARCH_API } from '../../../auth/resourceTypes';
+import { reloadPage } from '../../../utils/historyUtils';
+import { API_URL } from './../../../AppConfig';
 
-class ResolveSongsUrlButton extends Component {
+class DeleteGenreButton extends Component {
 
     state = {
         loading: false
@@ -24,18 +22,16 @@ class ResolveSongsUrlButton extends Component {
         }
         return (
             <Popconfirm
-                title="Sure to resolve songs url?"
-                onConfirm={this.resolve}
+                title="Sure to delete?"
+                onConfirm={() => this.handleDelete(this.props.id)}
                 disabled={this.state.loading}
             >
-                <Button type="primary" disabled={this.state.loading}>
-                    <RetweetOutlined />Resolve songs url
-                </Button>
+                <Button type="link">Delete</Button>
             </Popconfirm>
         );
     }
 
-    resolve = () => {
+    handleDelete = id => {
         this.setState({ loading: true });
 
         const config = {
@@ -44,10 +40,14 @@ class ResolveSongsUrlButton extends Component {
             }
         }
 
-        Axios.put(`${API_URL}/admin/radio-stations/${this.props.radioStationId}/streams/${this.props.streamId}/urls`, { type: 'SONGS' }, config)
+        Axios.delete(`${API_URL}/admin/genres/${id}`, config)
             .then(() => {
                 this.setState({ loading: false });
+                message.success({ content: `Genre with id = '${id}' has been deleted`, duration: 3 });
                 reloadPage(this.props.history);
+            })
+            .catch(() => {
+                message.error({ content: `Failed to delete genre with id = '${id}'`, duration: 5 });
             });
     };
 
@@ -61,4 +61,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(ResolveSongsUrlButton));
+export default connect(mapStateToProps)(withRouter(DeleteGenreButton));

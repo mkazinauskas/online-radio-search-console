@@ -1,6 +1,7 @@
 export const HOME = '/';
 export const RADIO_STATIONS = '/radio-stations';
 export const SONGS = '/songs';
+export const GENRES = '/genres';
 export const EVENTS = '/events';
 export const RADIO_STATION_STREAMS = '/radio-stations/:radioStationId/streams';
 export const RADIO_STATION_STREAM_URLS = '/radio-stations/:radioStationId/streams/:streamId/urls';

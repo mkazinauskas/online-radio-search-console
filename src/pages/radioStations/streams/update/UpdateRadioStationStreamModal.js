@@ -1,17 +1,86 @@
 import React, { Component } from 'react';
-import { Modal, Form, Input, Alert, Switch, Select } from 'antd';
+import { Modal, Form, Input, message, Switch, Select, InputNumber } from 'antd';
 import Axios from 'axios';
 import { connect } from 'react-redux';
 import { API_URL } from '../../../../AppConfig';
+import { extractErrors } from '../../../../utils/apiErrorUtils';
 
 const STREAM_TYPES = [
     'MP3', 'ACC', 'MPEG', 'UNKNOWN'
 ];
 
+const ModalForm = ({ visible, onCreate, onCancel, loading, errors, radioStationStream }) => {
+
+    const [form] = Form.useForm();
+
+    if (errors.length > 0) {
+        form.setFields(errors);
+    }
+
+    const typeOptions = STREAM_TYPES
+        .map(type => <Select.Option key={type} value={type}>{type}</Select.Option>);
+
+    return (
+        <Modal
+            visible={visible}
+            title="Update Radio Station Stream"
+            okText="Update"
+            cancelText="Cancel"
+            onCancel={onCancel}
+            okButtonProps={{ disabled: loading }}
+            onOk={() => {
+                form
+                    .validateFields()
+                    .then(values => {
+                        onCreate(values);
+                    })
+                    .catch(console.debug);
+            }}
+        >
+            <Form form={form}
+                layout='vertical'
+                initialValues={{
+                    'url': radioStationStream.url,
+                    'bitRate': radioStationStream.bitRate,
+                    'working': radioStationStream.working,
+                    'type': radioStationStream.type
+                }}>
+                <Form.Item label="URL" name="url" rules={
+                    [
+                        {
+                            required: true,
+                            type: 'url',
+                            message: 'Please input radio station stream url!'
+                        }
+                    ]
+                }>
+                    <Input />
+                </Form.Item>
+                <Form.Item label="Bit Rate" name="bitRate">
+                    <InputNumber />
+                </Form.Item>
+                <Form.Item label="Working" name="working" valuePropName="checked">
+                    <Switch />
+                </Form.Item>
+                <Form.Item label="Type" name="type">
+                    <Select
+                        showSearch
+                        defaultActiveFirstOption={false}
+                        showArrow={false}
+                        filterOption={false}
+                        notFoundContent={null}
+                        placeholder="Please select genres">
+                        {typeOptions}
+                    </Select>
+                </Form.Item>
+            </Form>
+        </Modal>
+    );
+};
+
 const DEFAULT_STATE = {
     loading: false,
-    successMessage: null,
-    errorMessage: null
+    errors: []
 }
 
 class UpdateRadioStationStreamModal extends Component {
@@ -20,114 +89,53 @@ class UpdateRadioStationStreamModal extends Component {
         ...DEFAULT_STATE,
     }
 
-    handleSubmit = e => {
-        e.preventDefault();
-        this.props.form.validateFields((err, values) => {
-            if (!err) {
-                this.setState({ loading: true, successMessage: null, errorMessage: null });
-                const config = {
-                    headers: {
-                        Authorization: `Bearer ${this.props.token}`
-                    }
-                }
-
-                let content = {
-                    url: values.url,
-                    bitRate: values.bitRate,
-                    working: values.working,
-                    type: values.type
-                }
-                Axios.patch(`${API_URL}/admin/radio-stations/${this.props.radioStationStream.radioStationId}/streams/${this.props.radioStationStream.id}`, content, config)
-                    .then(() => this.setState({ ...this.state, successMessage: 'Radio station stream was updated' }))
-                    .catch(() => this.setState({ ...this.state, errorMessage: 'Failed to update radio station stream' }))
-                    .then(() => this.setState({ ...this.state, loading: false }));
+    handleSubmit = values => {
+        this.setState({ loading: true, successMessage: null, errorMessage: null });
+        const config = {
+            headers: {
+                Authorization: `Bearer ${this.props.token}`
             }
-        });
+        }
+
+        let content = {
+            url: values.url,
+            bitRate: values.bitRate,
+            working: values.working,
+            type: values.type
+        }
+
+        const radioStationStreamId = this.props.radioStationStream.radioStationId;
+
+        Axios.patch(`${API_URL}/admin/radio-stations/${radioStationStreamId}/streams/${this.props.radioStationStream.id}`, content, config)
+            .then(() => {
+                message.success({ content: `Radio station stream '${radioStationStreamId}' was updated` })
+                this.props.onModalClose();
+            })
+            .catch((response) => {
+                const errors = extractErrors(response)
+
+                if (errors.length) {
+                    this.setState({ ...this.state, loading: false, errors });
+                } else {
+                    message.error({ content: 'Failed to update radio station stream', duration: 5 });
+                    this.setState({ ...this.state, loading: false });
+                }
+            });
     };
 
-    onCancel = () => {
-        this.props.form.resetFields();
-        this.props.onModalClose();
-    }
-
     render() {
-        const { getFieldDecorator } = this.props.form;
-        const radioStationStream = this.props.radioStationStream;
-
-        const typeOptions = STREAM_TYPES
-            .map(type => <Select.Option key={type} value={type}>{type}</Select.Option>);
-
-        const form = (
-            <Form
-                layout='vertical'
-                onSubmit={this.handleSubmit}
-            >
-                <Form.Item label="URL">
-                    {getFieldDecorator('url', {
-                        initialValue: radioStationStream.url,
-                        rules: [{ required: true, type: 'url', message: 'Please input radio station stream url!' }],
-                    })(<Input />)}
-                </Form.Item>
-                <Form.Item label="Bit Rate">
-                    {getFieldDecorator('bitRate', {
-                        initialValue: radioStationStream.bitRate,
-                        rules: [{ message: 'Please input radio station stream bit rate!' }],
-                    })(<Input type='number' />)}
-                </Form.Item>
-                <Form.Item label="Working">
-                    {getFieldDecorator('working', {
-                        initialValue: radioStationStream.working,
-                        valuePropName: 'checked',
-                    })(<Switch />)}
-                </Form.Item>
-                <Form.Item label="Type">
-                    {getFieldDecorator('type', {
-                        initialValue: radioStationStream.type,
-                    })(
-                        <Select
-                            showSearch
-                            defaultActiveFirstOption={false}
-                            showArrow={false}
-                            onSearch={this.handleSearch}
-                            filterOption={false}
-                            notFoundContent={null}
-                            placeholder="Please select genres">
-                            {typeOptions}
-                        </Select>
-                    )}
-                </Form.Item>
-            </Form>
-        );
-
-        const successMessage = this.state.successMessage
-            ? (<Alert message={this.state.successMessage} showIcon type="success" />)
-            : '';
-
-        const errorMessage = this.state.errorMessage
-            ? (<Alert message={this.state.errorMessage} showIcon type="error" />)
-            : '';
         return (
-            <span>
-                <Modal
-                    title="Update Radio Station Stream"
-                    visible={this.props.visible}
-                    okText="Update"
-                    okButtonProps={{ disabled: this.state.loading }}
-                    onOk={this.handleSubmit}
-                    onCancel={this.onCancel}
-                >
-                    <div style={{ marginBottom: 10 }}>
-                        {successMessage}
-                        {errorMessage}
-                    </div>
-                    {form}
-                </Modal>
-            </span>
+            <ModalForm
+                visible={this.props.visible}
+                loading={this.state.loading}
+                onCreate={this.handleSubmit}
+                onCancel={this.props.onModalClose}
+                errors={this.state.errors}
+                radioStationStream={this.props.radioStationStream}
+            />
         );
     }
 }
-
-const form = Form.create({ name: 'coordinated' })(UpdateRadioStationStreamModal)
 
 const mapStateToProps = (state) => {
     return {
@@ -135,4 +143,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(form);
+export default connect(mapStateToProps)(UpdateRadioStationStreamModal);

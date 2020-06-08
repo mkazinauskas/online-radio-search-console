@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import AddRadioStationStreamButton from './add/AddRadioStationStreamButton';
+import CreateRadioStationStreamButton from './create/CreateRadioStationStreamButton';
 import RadioStationStreamsHeader from './RadioStationStreamsHeader';
 import RadioStationStreamsTable from './RadioStationStreamsTable';
 
@@ -10,7 +10,7 @@ class RadioStationStreamsView extends Component {
             <div>
                 <RadioStationStreamsHeader />
                 <div style={{ marginTop: 10, marginBottom: 10 }}>
-                    <AddRadioStationStreamButton />
+                    <CreateRadioStationStreamButton />
                 </div>
                 <RadioStationStreamsTable />
             </div>

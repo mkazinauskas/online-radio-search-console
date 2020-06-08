@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { API_URL } from '../../../AppConfig';
 import { extractErrors } from '../../../utils/apiErrorUtils';
 
-const ModalForm = ({ visible, onSubmit, onCancel, loading, errors }) => {
+const ModalForm = ({ visible, onCreate, onCancel, loading, errors }) => {
 
     const [form] = Form.useForm();
 
@@ -16,8 +16,8 @@ const ModalForm = ({ visible, onSubmit, onCancel, loading, errors }) => {
     return (
         <Modal
             visible={visible}
-            title="Export Radio Stations"
-            okText="Upload"
+            title="Create New Radio Station"
+            okText="Create"
             cancelText="Cancel"
             onCancel={onCancel}
             okButtonProps={{ disabled: loading }}
@@ -25,38 +25,29 @@ const ModalForm = ({ visible, onSubmit, onCancel, loading, errors }) => {
                 form
                     .validateFields()
                     .then(values => {
-                        onSubmit(values);
+                        onCreate(values);
                     })
                     .catch(console.debug);
             }}
         >
             <Form
                 form={form}
-                layout='vertical'
-                initialValues={{
-                    'page': 0,
-                    'size': 10
-                }}
+                labelCol={{ span: 5 }}
+                wrapperCol={{ span: 12 }}
             >
-                <Form.Item label="Page" name="page" rules={
+                <Form.Item label='Title' name='title' rules={
                     [
                         {
                             required: true,
-                            message: 'Please enter page for export!'
-                        }
-                    ]
-                }>
-                    <Input type='page' />
-                </Form.Item>
-                <Form.Item label="Size" name="size" rules={
-                    [
+                            message: 'Please input radio station title!'
+                        },
                         {
-                            required: true,
-                            message: 'Please enter size of items to export!'
+                            max: 100,
+                            message: 'Title too long! (Max 100)'
                         }
                     ]
                 }>
-                    <Input type='size' />
+                    <Input />
                 </Form.Item>
             </Form>
         </Modal>
@@ -68,29 +59,27 @@ const DEFAULT_STATE = {
     errors: []
 }
 
-class ExportStationsModal extends Component {
+class CreateRadioStationModal extends Component {
 
     state = {
         ...DEFAULT_STATE
     }
 
-    handleSubmit = values => {
+    onCreate = values => {
         this.setState({ loading: true, errors: [] });
-        Axios({
-            url: `${API_URL}/admin/radio-stations/exporter?size=${values.size}&page=${values.page}`,
-            method: 'GET',
-            headers: { Authorization: `Bearer ${this.props.token}` },
-            responseType: 'blob'
-        })
-            .then(response => {
-                const url = window.URL.createObjectURL(new Blob([response.data]));
-                const link = document.createElement('a');
-                link.href = url;
-                link.setAttribute('download', 'export.csv');
-                document.body.appendChild(link);
-                link.click();
+        const config = {
+            headers: {
+                Authorization: `Bearer ${this.props.token}`
+            }
+        }
 
-                message.success({ content: `Radio stations were exported`, duration: 5 });
+        const content = {
+            ...values
+        }
+
+        Axios.post(API_URL + '/admin/radio-stations', content, config)
+            .then(() => {
+                message.success({ content: `Radio station '${values.title}' was created successfuly` })
                 this.props.onModalClose();
             })
             .catch((response) => {
@@ -99,10 +88,10 @@ class ExportStationsModal extends Component {
                 if (errors.length) {
                     this.setState({ ...this.state, loading: false, errors });
                 } else {
-                    message.error({ content: `Failed to export radio stations`, duration: 5 });
+                    message.error({ content: `Failed to create radio station '${values.title}'`, duration: 5 });
                     this.setState({ ...this.state, loading: false });
                 }
-            });
+            })
     };
 
     render() {
@@ -110,10 +99,7 @@ class ExportStationsModal extends Component {
             <ModalForm
                 visible={this.props.visible}
                 loading={this.state.loading}
-                onSubmit={this.handleSubmit}
-                onGenreSearch={this.onGenreSearch}
-                genres={this.state.genres}
-                radioStation={this.props.radioStation}
+                onCreate={this.onCreate}
                 onCancel={this.props.onModalClose}
                 errors={this.state.errors}
             />
@@ -127,4 +113,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(ExportStationsModal);
+export default connect(mapStateToProps)(CreateRadioStationModal);

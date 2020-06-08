@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import AddSongButton from './addSong/AddSongButton';
+import CreateSongButton from './createSong/CreateSongButton';
 import SongsTable from './SongsTable';
 
 class SongsView extends Component {
@@ -8,7 +8,7 @@ class SongsView extends Component {
         return (
             <div>
                 <div style={{ marginBottom: 10 }}>
-                    <AddSongButton />
+                    <CreateSongButton />
                 </div>
                 <SongsTable />
             </div>

@@ -1,11 +1,18 @@
-import { Icon, Layout, Menu } from 'antd';
+import { Layout, Menu } from 'antd';
+import {
+    HomeFilled,
+    UnorderedListOutlined,
+    NotificationOutlined,
+    PlayCircleFilled,
+    ReadFilled
+} from '@ant-design/icons';
 import { createBrowserHistory } from "history";
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from "react-router-dom";
 import { ADMIN } from '../auth/resourceRoleType';
 import { ONLINE_RADIO_SEARCH_API } from '../auth/resourceTypes';
-import { EVENTS, HOME, RADIO_STATIONS, SONGS } from './pathTypes';
+import { EVENTS, HOME, RADIO_STATIONS, SONGS, GENRES } from './pathTypes';
 
 class LeftSideMenuComponent extends Component {
     render() {
@@ -16,16 +23,20 @@ class LeftSideMenuComponent extends Component {
                 <div className="logo" />
                 <Menu theme="dark" mode="inline" defaultSelectedKeys={[history.location.pathname]}>
                     <Menu.Item key={HOME}>
-                        <Icon type="home" /><span>Main</span>
+                        <HomeFilled /><span>Main</span>
                         <Link to={HOME} />
                     </Menu.Item>
                     <Menu.Item key={RADIO_STATIONS}>
-                        <Icon type="unordered-list" /><span>Radio Stations</span>
+                        <UnorderedListOutlined /><span>Radio Stations</span>
                         <Link to={RADIO_STATIONS} />
                     </Menu.Item>
                     <Menu.Item key={SONGS}>
-                        <Icon type="play-circle" /><span>Songs</span>
+                        <PlayCircleFilled /><span>Songs</span>
                         <Link to={SONGS} />
+                    </Menu.Item>
+                    <Menu.Item key={GENRES}>
+                        <NotificationOutlined /><span>Genres</span>
+                        <Link to={GENRES} />
                     </Menu.Item>
                     {this.eventsMenu()}
                 </Menu>
@@ -36,7 +47,7 @@ class LeftSideMenuComponent extends Component {
     eventsMenu = () => {
         return this.props.hasAdminRole
             ? (<Menu.Item key={EVENTS}>
-                <Icon type="read" /><span>Events</span>
+                <ReadFilled /><span>Events</span>
                 <Link to={EVENTS} />
             </Menu.Item>)
             : null;

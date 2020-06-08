@@ -1,19 +1,96 @@
 import React, { Component } from 'react';
-import { Modal, Form, Input, Alert, Select } from 'antd';
+import { Modal, Form, Input, message, Select } from 'antd';
 import Axios from 'axios';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { isWebUri } from 'valid-url';
 import { API_URL } from '../../../../../AppConfig';
+import { extractErrors } from '../../../../../utils/apiErrorUtils';
 
 const URL_TYPES = [
     'SONGS', 'INFO'
 ];
 
+const ModalForm = ({ visible, onCreate, onCancel, loading, errors }) => {
+
+    const [form] = Form.useForm();
+
+    if (errors.length > 0) {
+        form.setFields(errors);
+    }
+
+    const typeOptions = URL_TYPES
+        .map(type => <Select.Option key={type} value={type}>{type}</Select.Option>);
+
+    return (
+        <Modal
+            visible={visible}
+            title="Create Radio Station Stream Url"
+            okText="Update"
+            cancelText="Cancel"
+            onCancel={onCancel}
+            okButtonProps={{ disabled: loading }}
+            onOk={() => {
+                form
+                    .validateFields()
+                    .then(values => {
+                        onCreate(values);
+                    })
+                    .catch(console.debug);
+            }}
+        >
+            <Form form={form} layout='vertical'>
+
+                <Form.Item label="Type" name="type" rules={
+                    [
+                        {
+                            required: true,
+                            message: 'Radio station stream title required!'
+                        }
+                    ]
+                }>
+                    <Select
+                        defaultActiveFirstOption={false}
+                        showArrow={false}
+                        filterOption={false}
+                        notFoundContent={null}
+                        placeholder="Please select genres">
+                        {typeOptions}
+                    </Select>
+                </Form.Item>
+
+                <Form.Item label="URL" name="url" rules={[
+                    { required: true, message: 'Please input radio station stream title!' },
+                    {
+                        validator: (rule, value, callback) => {
+                            if (value === value.trim()) {
+                                return Promise.resolve();
+                            } else {
+                                return Promise.reject('Value cannot have empty spaces around')
+                            }
+                        },
+                    },
+                    {
+                        validator: (rule, value, callback) => {
+                            if (isWebUri(value)) {
+                                return Promise.resolve();
+                            } else {
+                                return Promise.reject('Radio station stream url is invalid')
+                            }
+                        }
+                    }
+                ]}>
+                    <Input />
+                </Form.Item>
+            </Form>
+        </Modal>
+    );
+};
+
+
 const DEFAULT_STATE = {
     loading: false,
-    successMessage: null,
-    errorMessage: null
+    errors: []
 }
 
 class CreateStreamUrlModal extends Component {
@@ -22,119 +99,50 @@ class CreateStreamUrlModal extends Component {
         ...DEFAULT_STATE
     }
 
-    handleSubmit = e => {
-        e.preventDefault();
-        this.props.form.validateFields((err, values) => {
-            if (!err) {
-                this.setState({ loading: true, successMessage: null, errorMessage: null });
-                const config = {
-                    headers: {
-                        Authorization: `Bearer ${this.props.token}`
-                    }
-                }
-
-                const content = {
-                    ...values
-                }
-
-                const radioStationId = this.props.match.params.radioStationId;
-                const streamId = this.props.match.params.streamId;
-
-                Axios.post(`${API_URL}/admin/radio-stations/${radioStationId}/streams/${streamId}/urls`, content, config)
-                    .then(() => this.setState({ ...this.state, successMessage: 'Radio station stream url was added' }))
-                    .catch(() => this.setState({ ...this.state, errorMessage: 'Failed to add stream url' }))
-                    .then(() => this.setState({ ...this.state, loading: false }));
+    handleSubmit = values => {
+        this.setState({ loading: true, successMessage: null, errorMessage: null });
+        const config = {
+            headers: {
+                Authorization: `Bearer ${this.props.token}`
             }
-        });
+        }
+
+        const content = {
+            ...values
+        }
+
+        const radioStationId = this.props.match.params.radioStationId;
+        const streamId = this.props.match.params.streamId;
+
+        Axios.post(`${API_URL}/admin/radio-stations/${radioStationId}/streams/${streamId}/urls`, content, config)
+            .then(() => {
+                message.success({ content: `Radio station stream url '${values.url}' was created` })
+                this.props.onModalClose();
+            })
+            .catch((response) => {
+                const errors = extractErrors(response)
+
+                if (errors.length) {
+                    this.setState({ ...this.state, loading: false, errors });
+                } else {
+                    message.error({ content: 'Failed to update radio station stream', duration: 5 });
+                    this.setState({ ...this.state, loading: false });
+                }
+            });
     };
 
-    onCancel = () => {
-        this.props.form.resetFields();
-        this.props.onModalClose();
-    }
-
     render() {
-        const { getFieldDecorator } = this.props.form;
-
-
-        const typeOptions = URL_TYPES
-            .map(type => <Select.Option key={type} value={type}>{type}</Select.Option>);
-
-        const form = (
-            <Form labelCol={{ span: 5 }} wrapperCol={{ span: 12 }} onSubmit={this.handleSubmit}>
-                <Form.Item label="Type">
-                    {getFieldDecorator('type')(
-                        <Select
-                            defaultActiveFirstOption={false}
-                            showArrow={false}
-                            onSearch={this.handleSearch}
-                            filterOption={false}
-                            notFoundContent={null}
-                            placeholder="Please select genres">
-                            {typeOptions}
-                        </Select>
-                    )}
-                </Form.Item>
-                <Form.Item label="URL">
-                    {getFieldDecorator('url', {
-                        rules: [
-                            { required: true, message: 'Please input radio station stream title!' },
-                            {
-                                validator: (rule, value, callback) => {
-                                    if (value === value.trim()) {
-                                        callback();
-                                    } else {
-                                        callback(false);
-                                    }
-                                },
-                                message: 'Value cannot have empty spaces around',
-                            },
-                            {
-                                validator: (rule, value, callback) => {
-                                    if (isWebUri(value)) {
-                                        callback();
-                                    } else {
-                                        callback(false);
-                                    }
-                                },
-                                message: 'Radio station stream url is invalid',
-                            },
-
-                        ],
-                    })(<Input />)}
-                </Form.Item>
-            </Form>
-        );
-
-        const successMessage = this.state.successMessage
-            ? (<Alert message={this.state.successMessage} showIcon type="success" />)
-            : '';
-
-        const errorMessage = this.state.errorMessage
-            ? (<Alert message={this.state.errorMessage} showIcon type="error" />)
-            : '';
         return (
-            <span>
-                <Modal
-                    title="Add New Radio Station Stream"
-                    visible={this.props.visible}
-                    okText="Add"
-                    okButtonProps={{ disabled: this.state.loading }}
-                    onOk={this.handleSubmit}
-                    onCancel={this.onCancel}
-                >
-                    <div style={{ marginBottom: 10 }}>
-                        {successMessage}
-                        {errorMessage}
-                    </div>
-                    {form}
-                </Modal>
-            </span>
+            <ModalForm
+                visible={this.props.visible}
+                loading={this.state.loading}
+                onCreate={this.handleSubmit}
+                onCancel={this.props.onModalClose}
+                errors={this.state.errors}
+            />
         );
     }
 }
-
-const form = Form.create({ name: 'coordinated' })(withRouter(CreateStreamUrlModal))
 
 const mapStateToProps = (state) => {
     return {
@@ -142,4 +150,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(form);
+export default connect(mapStateToProps)(withRouter(CreateStreamUrlModal));

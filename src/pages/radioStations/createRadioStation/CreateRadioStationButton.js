@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
-import { Button, Icon } from 'antd';
+import { Button } from 'antd';
+import {
+    PlusCircleFilled,
+} from '@ant-design/icons';
 import { connect } from 'react-redux';
-import AddRadioStationStreamModal from './AddRadioStationStreamModal';
+import AddRadioStationModal from './CreateRadioStationModal';
+import { ADMIN } from '../../../auth/resourceRoleType';
+import { ONLINE_RADIO_SEARCH_API } from '../../../auth/resourceTypes';
 import { withRouter } from 'react-router-dom'
-import { ADMIN } from '../../../../auth/resourceRoleType';
-import { ONLINE_RADIO_SEARCH_API } from '../../../../auth/resourceTypes';
-import { reloadPage } from '../../../../utils/historyUtils';
+import { reloadPage } from '../../../utils/historyUtils';
 
-class AddRadioStationStreamButton extends Component {
+class CreateRadioStationButton extends Component {
 
     state = {
         visible: false,
@@ -29,10 +32,10 @@ class AddRadioStationStreamButton extends Component {
         return (
             <span>
                 <Button type="primary" onClick={this.showModal}>
-                    <Icon type="plus-circle" theme="filled" />
-                    Add New Stream
+                    <PlusCircleFilled />
+                    Create New Radio Station
                 </Button>
-                <AddRadioStationStreamModal
+                <AddRadioStationModal
                     key={new Date().getMilliseconds()}
                     visible={this.state.visible}
                     onModalClose={this.handleModalClose}
@@ -49,4 +52,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(AddRadioStationStreamButton));
+export default connect(mapStateToProps)(withRouter(CreateRadioStationButton));

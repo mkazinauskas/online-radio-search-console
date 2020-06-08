@@ -8,7 +8,8 @@ import RadioStationSongsView from '../pages/radioStations/songs/RadioStationSong
 import RadioStationStreamsView from '../pages/radioStations/streams/RadioStationStreamsView';
 import StreamUrlsView from '../pages/radioStations/streams/urls/StreamUrlsView';
 import SongsView from '../pages/songs/SongsView';
-import { EVENTS, HOME, RADIO_STATIONS, RADIO_STATION_SONGS, RADIO_STATION_STREAMS, RADIO_STATION_STREAM_URLS, SONGS } from './pathTypes';
+import { EVENTS, HOME, RADIO_STATIONS, RADIO_STATION_SONGS, RADIO_STATION_STREAMS, RADIO_STATION_STREAM_URLS, SONGS, GENRES } from './pathTypes';
+import GenresView from '../pages/genres/GenresView';
 
 export default () => (
     <Layout.Content
@@ -37,6 +38,9 @@ export default () => (
             </Route>
             <Route exact path={SONGS}>
                 <SongsView />
+            </Route>
+            <Route exact path={GENRES}>
+                <GenresView />
             </Route>
             <Route exact path={EVENTS}>
                 <EventsView />
