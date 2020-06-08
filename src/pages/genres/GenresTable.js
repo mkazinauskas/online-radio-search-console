@@ -2,7 +2,7 @@ import { Button, Result, Table } from 'antd';
 import Axios from 'axios';
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import { SONGS } from '../../layouts/pathTypes';
+import { GENRES } from '../../layouts/pathTypes';
 import { API_URL } from '../../AppConfig';
 import DeleteGenreButton from './deleteGenre/DeleteGenreButton';
 
@@ -121,7 +121,7 @@ class GenresTable extends Component {
         urlSearchParams.set('page', page);
         urlSearchParams.set('size', size);
 
-        this.props.history.push(SONGS + '?' + urlSearchParams.toString());
+        this.props.history.push(GENRES + '?' + urlSearchParams.toString());
     }
 
     handleTableChange = (page) => {
@@ -133,7 +133,7 @@ class GenresTable extends Component {
             return (
                 <Result
                     status="error"
-                    title="Failed to load songs"
+                    title="Failed to load genres"
                     subTitle="Please wait until service will be working again"
                     extra={[
                         <Button type="primary" key="console" onClick={this.loadData}>Retry</Button>,
