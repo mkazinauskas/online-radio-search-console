@@ -8,6 +8,7 @@ import ShowRadioStationSongsButton from './songs/ShowRadioStationSongsButton';
 import ShowRadioStationStreamsButton from './streams/ShowRadioStationStreamsButton';
 import UpdateRadioStationButton from './updateRadioStation/UpdateRadioStationButton';
 import { API_URL } from './../../AppConfig';
+import RadioStationsFilter from './RadioStationsFilter';
 
 const columns = [
     {
@@ -78,6 +79,12 @@ class RadioStationsTable extends Component {
         filter: {
             page: 0,
             size: 10,
+            id: null,
+            uniqueId: null,
+            enabled: null,
+            title: null,
+            songId: null,
+            genreId: null
         },
         error: false,
         loading: true,
@@ -97,25 +104,29 @@ class RadioStationsTable extends Component {
     loadDataWithSearchParams = () => {
         const params = new URLSearchParams(this.props.history.location.search);
 
-        let page = params.get('page');
-        if (!page) {
-            page = 1;
-        }
-
-        let size = params.get('size');
-        if (!size) {
-            size = 10;
-        }
-
         const filter = {
-            page: page - 1,
-            size,
+            page: this.getParam(params, 'page', 1) - 1,
+            size: this.getParam(params, 'size', 10),
+            id: this.getParam(params, 'id', null),
+            uniqueId: this.getParam(params, 'uniqueId', null),
+            title: this.getParam(params, 'title', null),
+            enabled: this.getParam(params, 'enabled', null),
+            songId: this.getParam(params, 'songId', null),
+            genreId: this.getParam(params, 'genreId', null),
         };
 
         this.setState(
             { ...this.state, filter },
             this.loadData
         );
+    }
+
+    getParam = (params, key, defaultValue) => {
+        let value = params.get(key);
+        if (!value) {
+            value = defaultValue;
+        }
+        return value;
     }
 
     loadData = () => {
@@ -125,6 +136,24 @@ class RadioStationsTable extends Component {
         urlSearchParams.set('sort', 'id,desc');
         urlSearchParams.set('page', this.state.filter.page);
         urlSearchParams.set('size', this.state.filter.size);
+        if (this.state.filter.id) {
+            urlSearchParams.set('id', this.state.filter.id);
+        }
+        if (this.state.filter.uniqueId) {
+            urlSearchParams.set('uniqueId', this.state.filter.uniqueId);
+        }
+        if (this.state.filter.title) {
+            urlSearchParams.set('title', this.state.filter.title);
+        }
+        if (this.state.filter.enabled !== null) {
+            urlSearchParams.set('enabled', this.state.filter.enabled);
+        }
+        if (this.state.filter.songId) {
+            urlSearchParams.set('songId', this.state.filter.songId);
+        }
+        if (this.state.filter.genreId) {
+            urlSearchParams.set('genreId', this.state.filter.genreId);
+        }
 
         Axios.get(API_URL + '/radio-stations?' + urlSearchParams.toString())
             .then((response) => {
@@ -166,6 +195,10 @@ class RadioStationsTable extends Component {
         this.redirectToPage(page.current, page.pageSize);
     }
 
+    handleFilter = (filters) => {
+        console.debug(filters);
+    }
+
     render() {
         if (this.state.error) {
             return (
@@ -181,14 +214,20 @@ class RadioStationsTable extends Component {
             );
         }
         return (
-            <Table
-                columns={columns}
-                rowKey={record => record.id}
-                dataSource={this.state.data}
-                pagination={this.state.pagination}
-                loading={this.state.loading}
-                onChange={this.handleTableChange}
-            />
+            <div>
+                <div style={{ marginTop: 10, marginBottom: 15 }}>
+                    <RadioStationsFilter key="mine" onSubmit={this.handleFilter} filters={this.state.filter} />
+                </div>
+                <Table
+                    columns={columns}
+                    rowKey={record => record.id}
+                    dataSource={this.state.data}
+                    pagination={this.state.pagination}
+                    loading={this.state.loading}
+                    onChange={this.handleTableChange}
+                />
+            </div>
+
         );
     }
 }
