@@ -1,20 +1,28 @@
 import { InputNumber, Input, Select } from 'antd';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Form, Button } from 'antd';
 
-const RadioStationsFilter = ({ filters, onSubmit }) => {
+const RadioStationsFilter = ({ filters, onFinish }) => {
+
+    const [form] = Form.useForm();
+
+    useEffect(() => {
+        form.setFieldsValue({
+            'id': filters.id,
+            'uniqueId': filters.uniqueId,
+            'enabled': filters.enabled,
+            'title': filters.title,
+            'songId': filters.songId,
+            'genreId': filters.genreId
+        });
+
+    }, [filters, form]);
+
     return (
         <Form
+            form={form}
             layout="inline"
-            onFinish={onSubmit}
-            initialValues={{
-                'id': filters.id,
-                'uniqueId': filters.uniqueId,
-                'enabled': filters.enabled,
-                'title': filters.title,
-                'songId': filters.songId,
-                'genreId': filters.genreId
-            }}
+            onFinish={onFinish}
         >
             <Form.Item name="id" label="Id">
                 <InputNumber />
@@ -27,7 +35,7 @@ const RadioStationsFilter = ({ filters, onSubmit }) => {
             </Form.Item>
             <Form.Item name="enabled" label="Enabled">
                 <Select>
-                    <Select.Option value="null">All</Select.Option>
+                    <Select.Option value="">All</Select.Option>
                     <Select.Option value="true">Enabled</Select.Option>
                     <Select.Option value="false">Disabled</Select.Option>
                 </Select>

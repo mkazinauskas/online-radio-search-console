@@ -104,8 +104,12 @@ class RadioStationsTable extends Component {
     loadDataWithSearchParams = () => {
         const params = new URLSearchParams(this.props.history.location.search);
 
+        let page = this.getParam(params, 'page', 1);
+        if (page > 0) {
+            page = page - 1;
+        }
         const filter = {
-            page: this.getParam(params, 'page', 1) - 1,
+            page,
             size: this.getParam(params, 'size', 10),
             id: this.getParam(params, 'id', null),
             uniqueId: this.getParam(params, 'uniqueId', null),
@@ -165,7 +169,7 @@ class RadioStationsTable extends Component {
 
                 if (!data.length && response.data.page.totalPages > 1) {
                     //If last item from page deleted, we want to go back to latest existing page
-                    this.redirectToPage(response.data.page.totalPages, response.data.page.size);
+                    this.redirectToPage({ ...this.state.filter, page: response.data.page.totalPages - 1, size: response.data.page.size });
                 }
 
                 this.setState({
@@ -183,20 +187,77 @@ class RadioStationsTable extends Component {
             .then(() => this.setState({ ...this.state, loading: false }));
     }
 
-    redirectToPage = (page, size) => {
+    redirectToPage = (filter) => {
         const urlSearchParams = new URLSearchParams();
-        urlSearchParams.set('page', page);
-        urlSearchParams.set('size', size);
+        urlSearchParams.set('page', filter.page + 1);
+        urlSearchParams.set('size', filter.size);
+        if (this.state.filter.id) {
+            urlSearchParams.set('id', this.state.filter.id);
+        }
+        if (this.state.filter.uniqueId) {
+            urlSearchParams.set('uniqueId', this.state.filter.uniqueId);
+        }
+        if (this.state.filter.title) {
+            urlSearchParams.set('title', this.state.filter.title);
+        }
+        if (this.state.filter.enabled !== null) {
+            urlSearchParams.set('enabled', this.state.filter.enabled);
+        }
+        if (this.state.filter.songId) {
+            urlSearchParams.set('songId', this.state.filter.songId);
+        }
+        if (this.state.filter.genreId) {
+            urlSearchParams.set('genreId', this.state.filter.genreId);
+        }
 
         this.props.history.push(RADIO_STATIONS + '?' + urlSearchParams.toString());
     }
 
     handleTableChange = (page) => {
-        this.redirectToPage(page.current, page.pageSize);
+        this.redirectToPage({ ...this.state.filter, page: page.current - 1, size: page.pageSize });
     }
 
-    handleFilter = (filters) => {
-        console.debug(filters);
+    handleFilter = (newFilters) => {
+        const filters = { ...this.state.filter, page: 0 };
+
+        if (newFilters.id) {
+            filters.id = newFilters.id
+        } else {
+            filters.id = null;
+        }
+
+        if (newFilters.uniqueId) {
+            filters.uniqueId = newFilters.uniqueId
+        } else {
+            filters.uniqueId = null;
+        }
+
+        if (newFilters.title) {
+            filters.title = newFilters.title.trim()
+        } else {
+            filters.title = null;
+        }
+
+        if (newFilters.enabled) {
+            filters.enabled = newFilters.enabled
+        } else {
+            filters.enabled = null;
+        }
+
+        if (newFilters.songId) {
+            filters.songId = newFilters.songId
+        } else {
+            filters.songId = null;
+        }
+
+        if (newFilters.genreId) {
+            filters.genreId = newFilters.genreId
+        } else {
+            filters.genreId = null;
+        }
+
+        this.setState({ ...this.state, filter: filters }, () => this.redirectToPage(this.state.filter))
+
     }
 
     render() {
@@ -216,7 +277,7 @@ class RadioStationsTable extends Component {
         return (
             <div>
                 <div style={{ marginTop: 10, marginBottom: 15 }}>
-                    <RadioStationsFilter key="mine" onSubmit={this.handleFilter} filters={this.state.filter} />
+                    <RadioStationsFilter key="mine" onFinish={this.handleFilter} filters={this.state.filter} />
                 </div>
                 <Table
                     columns={columns}
