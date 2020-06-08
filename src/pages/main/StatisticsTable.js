@@ -7,13 +7,12 @@ const Item = ({ title, statistics }) => {
     const gridStyle = {
         width: '100%',
         textAlign: 'left',
-      };
+    };
 
-    // <Card.Grid>Content</Card.Grid>
     const text = Object.keys(statistics)
         .map(key => (<Card.Grid style={gridStyle} key={key}><i>{key}</i>: {statistics[key]}</Card.Grid>))
     return (
-        <Col span={8} style={{marginBottom:"10px"}}>
+        <Col span={8} style={{ marginBottom: "10px" }}>
             <Card title={title}>
                 {text}
             </Card>
@@ -28,7 +27,7 @@ const Items = ({ data }) => {
         );
     }
     return Object.keys(data.statistics)
-        .map(key => (<Item statistics={data.statistics[key]} key={key} title={key}/>))
+        .map(key => (<Item statistics={data.statistics[key]} key={key} title={key} />))
 }
 
 class StatisticsTable extends Component {

@@ -23,7 +23,7 @@ class LeftSideMenuComponent extends Component {
                 <div className="logo" />
                 <Menu theme="dark" mode="inline" defaultSelectedKeys={[history.location.pathname]}>
                     <Menu.Item key={HOME}>
-                        <HomeFilled /><span>Main</span>
+                        <HomeFilled /><span>Statistics</span>
                         <Link to={HOME} />
                     </Menu.Item>
                     <Menu.Item key={RADIO_STATIONS}>

@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
 import EventsTable from './EventsTable';
+import { PageHeader } from 'antd';
 
 class EventsView extends Component {
 
     render() {
         return (
-            <EventsTable />
+            <div>
+                <PageHeader title="Events" />
+                <EventsTable />
+            </div>
         );
     }
 }

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import StatisticsTable from './StatisticsTable';
 import { PageHeader } from 'antd';
 
-class MainView extends Component {
+class StatisticsView extends Component {
 
     render() {
         return (
@@ -14,4 +14,4 @@ class MainView extends Component {
     }
 }
 
-export default MainView;
+export default StatisticsView;
