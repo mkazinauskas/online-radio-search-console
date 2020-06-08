@@ -20,10 +20,10 @@ class LeftSideMenuComponent extends Component {
 
         return (
             <Layout.Sider trigger={null} collapsible collapsed={this.props.collapsed}>
-                <div className="logo" />
+                <div className="logo">ORS Console</div>
                 <Menu theme="dark" mode="inline" defaultSelectedKeys={[history.location.pathname]}>
                     <Menu.Item key={HOME}>
-                        <HomeFilled /><span>Main</span>
+                        <HomeFilled /><span>Statistics</span>
                         <Link to={HOME} />
                     </Menu.Item>
                     <Menu.Item key={RADIO_STATIONS}>
