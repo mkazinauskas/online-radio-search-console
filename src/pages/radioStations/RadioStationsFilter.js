@@ -35,7 +35,7 @@ const RadioStationsFilter = ({ filters, onFinish }) => {
             </Form.Item>
             <Form.Item name="enabled" label="Enabled">
                 <Select>
-                    <Select.Option value="">All</Select.Option>
+                    <Select.Option>All</Select.Option>
                     <Select.Option value="true">Enabled</Select.Option>
                     <Select.Option value="false">Disabled</Select.Option>
                 </Select>
