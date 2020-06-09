@@ -1,4 +1,4 @@
-import { Button, Result, Card, Row, Col } from 'antd';
+import { Button, Result, Card, Row, Col, Spin } from 'antd';
 import Axios from 'axios';
 import React, { Component } from 'react';
 import { API_URL } from '../../AppConfig';
@@ -21,11 +21,6 @@ const Item = ({ title, statistics }) => {
 }
 
 const Items = ({ data }) => {
-    if (!data || !data.statistics) {
-        return (
-            <p>Statistics are loading.</p>
-        );
-    }
     return Object.keys(data.statistics)
         .map(key => (<Item statistics={data.statistics[key]} key={key} title={key} />))
 }
@@ -54,6 +49,14 @@ class StatisticsTable extends Component {
     }
 
     render() {
+        if (this.state.loading) {
+            return (
+                <Spin>
+                    <Row gutter={16}>
+                    </Row>
+                </Spin>
+            );
+        }
         if (this.state.error) {
             return (
                 <Result
@@ -70,17 +73,7 @@ class StatisticsTable extends Component {
         return (
             <Row gutter={16}>
                 <Items data={this.state.data} />
-
             </Row>
-
-            // <Table
-            //     columns={columns}
-            //     rowKey={record => record.id}
-            //     dataSource={this.state.data}
-            //     pagination={this.state.pagination}
-            //     loading={this.state.loading}
-            //     onChange={this.handleTableChange}
-            // />
         );
     }
 }
