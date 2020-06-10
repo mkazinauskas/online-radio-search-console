@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Form, Input, message } from 'antd';
+import { Modal, Form, message, InputNumber } from 'antd';
 import Axios from 'axios';
 import { connect } from 'react-redux';
 import { API_URL } from '../../../AppConfig';
@@ -17,7 +17,7 @@ const ModalForm = ({ visible, onSubmit, onCancel, loading, errors }) => {
         <Modal
             visible={visible}
             title="Export Radio Stations"
-            okText="Upload"
+            okText="Export"
             cancelText="Cancel"
             onCancel={onCancel}
             okButtonProps={{ disabled: loading }}
@@ -46,17 +46,22 @@ const ModalForm = ({ visible, onSubmit, onCancel, loading, errors }) => {
                         }
                     ]
                 }>
-                    <Input type='page' />
+                    <InputNumber />
                 </Form.Item>
                 <Form.Item label="Size" name="size" rules={
                     [
                         {
                             required: true,
                             message: 'Please enter size of items to export!'
+                        },
+                        {
+                            max: 2000,
+                            type: "number",
+                            message: 'Please select less than 2000 items per page to export'
                         }
                     ]
                 }>
-                    <Input type='size' />
+                    <InputNumber />
                 </Form.Item>
             </Form>
         </Modal>
@@ -86,7 +91,7 @@ class ExportStationsModal extends Component {
                 const url = window.URL.createObjectURL(new Blob([response.data]));
                 const link = document.createElement('a');
                 link.href = url;
-                link.setAttribute('download', 'export.csv');
+                link.setAttribute('download', `export-${values.page}-${values.size}.json`);
                 document.body.appendChild(link);
                 link.click();
 
