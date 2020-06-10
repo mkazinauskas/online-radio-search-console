@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Form, message, Upload, Button } from 'antd';
+import { Modal, Form, message, Upload, Button, Switch } from 'antd';
 import {
     UploadOutlined,
 } from '@ant-design/icons';
@@ -48,6 +48,9 @@ const ModalForm = ({ visible, onSubmit, onCancel, loading, errors, file, onFileR
                 form={form}
                 layout="horizontal"
             >
+                <Form.Item label="Import Unique Id's" name="importUniqueIds" valuePropName="checked">
+                    <Switch/>
+                </Form.Item>
                 <Form.Item label="Radio Stations from '.csv'" name="file" rules={
                     [
                         {
@@ -83,12 +86,13 @@ class ImportStationsModal extends Component {
 
     }
 
-    onUpload = () => {
+    onUpload = values => {
         if (!this.state.file) {
             return;
         }
         const formData = new FormData();
         formData.append('file', this.state.file);
+        formData.append('importUniqueIds', values.importUniqueIds);
 
         this.setState({
             loading: true,
