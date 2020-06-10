@@ -47,6 +47,9 @@ const ModalForm = ({ visible, onSubmit, onCancel, loading, errors, file, onFileR
             <Form
                 form={form}
                 layout="horizontal"
+                initialValues={{
+                    'importUniqueIds': false,
+                }}
             >
                 <Form.Item label="Import Unique Id's" name="importUniqueIds" valuePropName="checked">
                     <Switch/>
