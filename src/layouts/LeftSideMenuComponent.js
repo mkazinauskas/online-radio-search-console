@@ -4,7 +4,6 @@ import {
     UnorderedListOutlined,
     NotificationOutlined,
     PlayCircleFilled,
-    ReadFilled
 } from '@ant-design/icons';
 import { createBrowserHistory } from "history";
 import React, { Component } from 'react';
@@ -12,7 +11,7 @@ import { connect } from 'react-redux';
 import { Link } from "react-router-dom";
 import { ADMIN } from '../auth/resourceRoleType';
 import { ONLINE_RADIO_SEARCH_API } from '../auth/resourceTypes';
-import { EVENTS, HOME, RADIO_STATIONS, SONGS, GENRES } from './pathTypes';
+import { HOME, RADIO_STATIONS, SONGS, GENRES } from './pathTypes';
 
 class LeftSideMenuComponent extends Component {
     render() {
@@ -38,19 +37,9 @@ class LeftSideMenuComponent extends Component {
                         <NotificationOutlined /><span>Genres</span>
                         <Link to={GENRES} />
                     </Menu.Item>
-                    {this.eventsMenu()}
                 </Menu>
             </Layout.Sider>
         )
-    }
-
-    eventsMenu = () => {
-        return this.props.hasAdminRole
-            ? (<Menu.Item key={EVENTS}>
-                <ReadFilled /><span>Events</span>
-                <Link to={EVENTS} />
-            </Menu.Item>)
-            : null;
     }
 }
 
