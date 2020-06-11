@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/modestukasai/online-radio-search-console.svg?branch=master)](https://travis-ci.org/modestukasai/online-radio-search-console)
+[![Build Status](https://travis-ci.com/modestukasai/online-radio-search-console.svg?branch=master)](https://travis-ci.com/modestukasai/online-radio-search-console)
 
 # Online Radio Search Console
 This is main management tool for this web site
