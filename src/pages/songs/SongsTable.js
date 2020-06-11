@@ -13,6 +13,10 @@ const columns = [
         width: '10%',
     },
     {
+        title: 'Unique Id',
+        dataIndex: 'uniqueId',
+    },
+    {
         title: 'Title',
         dataIndex: 'title',
         width: '40%',
