@@ -16,7 +16,7 @@ const ModalForm = ({ visible, onAdd, onCancel, loading, errors }) => {
     return (
         <Modal
             visible={visible}
-            title="Create New Song"
+            title="Create New Genre"
             okText="Create"
             cancelText="Cancel"
             onCancel={onCancel}
