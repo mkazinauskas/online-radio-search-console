@@ -21,6 +21,11 @@ const columns = [
     {
         title: 'Url',
         dataIndex: 'url',
+        render: (text, record) => {
+            return (
+                <a rel="noopener noreferrer" target='_blank' href={record.url} >{record.url}</a>
+            );
+        },
     },
     {
         title: 'Bit Rate',
